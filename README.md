@@ -47,6 +47,22 @@
 
 ---
 
+## 🕹️ שחק עכשיו (Live Demo)
+
+<p align="center">
+  <a href="https://squad.idlhq.co.il/" target="_blank">
+    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop" alt="Squad Noobs Preview" style="border-radius: 12px; border: 2px solid #f59e0b; box-shadow: 0 10px 25px rgba(245,158,11,0.3); width: 100%; max-width: 800px;">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://squad.idlhq.co.il/" target="_blank">
+    <img src="https://img.shields.io/badge/🚀_לחץ_כאן_למשחק_ב-SQUAD_NOOBS-f59e0b?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Play Online">
+  </a>
+</p>
+
+---
+
 ## ⌨️ מקשים ובקרת שליטה
 
 | פעולה | שחקן 1 (מקלדת ראשית) | שחקן 2 (במצב PVP) |

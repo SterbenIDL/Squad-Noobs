@@ -1,0 +1,6 @@
+{
+  "name": "Squad Noobs - 2D Fighting Game",
+  "description": "Squad Noobs: an advanced 2D arcade fighting game with articulated procedural anime brawlers, dynamic hitboxes, 5-move combat arsenals, anime OST soundtrack, and multiplayer arena battles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

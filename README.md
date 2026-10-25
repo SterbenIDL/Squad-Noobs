@@ -35,7 +35,7 @@
 - **Frame Data מדויק:** ניהול מלא של שלבי המכה (`Startup`, `Active`, `Recovery`, `HitStun`, `BlockStun`).
 - **פידבק קולנועי:** רעידות מסך דינמיות (`Screen Shake`), עצירת פרימים בעת פגיעה (`Hit-Stop`) וטבעות הדף (`Shockwave Rings`).
 - **מערכת תנועה מתקדמת:** דאש מהיר (`Dash`) הכולל אפקט עקבות רוח (`Ghost Trails`).
-- **מתקפות אולטימייט אלמנטריות:** הטענת מד אנרגיה ושחרור מהלומות אולטימייט קולנועיות המציפות את הזירה באפקטים ייחודיים.
+- **מתקפות אולטימייט אלמנטריות:** הטענת מד אנרגיה ושחרור מהלומות אולטימייט קולנועייות המציפות את הזירה באפקטים ייחודיים.
 - **מנוע סאונד סינתטי (Arcade Audio Engine):** הפקת אפקטים קוליים חיים באמצעות Web Audio API בשילוב נגנים לשירי פסקול אנימה אגדיים.
 
 ---
@@ -47,11 +47,11 @@
 
 ---
 
-## 🕹️ שחק עכשיו (Live Demo)
+## 🕹️ שחק עכשיו (Live Demo & Preview)
 
 <p align="center">
   <a href="https://squad.idlhq.co.il/" target="_blank">
-    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop" alt="Squad Noobs Preview" style="border-radius: 12px; border: 2px solid #f59e0b; box-shadow: 0 10px 25px rgba(245,158,11,0.3); width: 100%; max-width: 800px;">
+    <img src="image_267799.jpg" alt="Squad Noobs Character Select Preview" style="border-radius: 12px; border: 2px solid #f59e0b; box-shadow: 0 10px 25px rgba(245,158,11,0.3); width: 100%; max-width: 900px;">
   </a>
 </p>
 

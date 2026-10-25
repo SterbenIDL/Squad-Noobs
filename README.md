@@ -51,7 +51,7 @@
 
 <p align="center">
   <a href="https://squad.idlhq.co.il/" target="_blank">
-    <img src="./logo.jpg" alt="Squad Noobs Preview" style="border-radius: 12px; border: 2px solid #f59e0b; box-shadow: 0 10px 25px rgba(245,158,11,0.3); width: 100%; max-width: 900px;">
+    <img src="./logo.jpeg" alt="Squad Noobs Preview" style="border-radius: 12px; border: 2px solid #f59e0b; box-shadow: 0 10px 25px rgba(245,158,11,0.3); width: 100%; max-width: 900px;">
   </a>
 </p>
 <p align="center">

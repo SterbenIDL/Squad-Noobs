@@ -51,10 +51,9 @@
 
 <p align="center">
   <a href="https://squad.idlhq.co.il/" target="_blank">
-    <img src="image_267799.jpg" alt="Squad Noobs Character Select Preview" style="border-radius: 12px; border: 2px solid #f59e0b; box-shadow: 0 10px 25px rgba(245,158,11,0.3); width: 100%; max-width: 900px;">
+    <img src="./logo.jpg" alt="Squad Noobs Preview" style="border-radius: 12px; border: 2px solid #f59e0b; box-shadow: 0 10px 25px rgba(245,158,11,0.3); width: 100%; max-width: 900px;">
   </a>
 </p>
-
 <p align="center">
   <a href="https://squad.idlhq.co.il/" target="_blank">
     <img src="https://img.shields.io/badge/🚀_לחץ_כאן_למשחק_ב-SQUAD_NOOBS-f59e0b?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Play Online">

@@ -4389,46 +4389,6 @@ export default function App() {
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL 6: EXIT CONFIRMATION MODAL */}
-      {/* ========================================================================= */}
-      {showExitModal && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-900 border-2 border-red-500 rounded-2xl max-w-sm w-full p-6 shadow-2xl flex flex-col items-center text-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-red-600/20 border-2 border-red-500 flex items-center justify-center shadow-[0_0_25px_rgba(239,68,68,0.5)]">
-              <LogOut className="w-8 h-8 text-red-400" />
-            </div>
-
-            <h3 className="text-xl font-black uppercase text-red-400 tracking-wider">
-              יציאה מהמשחק?
-            </h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              תודה ששיחקתם ב-<strong>SQUAD NOOBS</strong>!
-              <br />
-              האם ברצונכם לסיים את המשחק?
-            </p>
-
-            <div className="flex flex-col gap-2 w-full mt-2">
-              <button
-                onClick={() => {
-                  setShowExitModal(false);
-                  audio.playKO();
-                }}
-                className="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase rounded-xl transition cursor-pointer shadow-lg"
-              >
-                כן, יציאה (THANKS FOR PLAYING)
-              </button>
-              <button
-                onClick={() => setShowExitModal(false)}
-                className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase rounded-xl transition cursor-pointer"
-              >
-                המשך לשחק (חזור)
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
       {/* SCREEN 2: CHARACTER SELECTION */}
       {/* ========================================================================= */}
       {screen === 'CHARACTER_SELECT' && (

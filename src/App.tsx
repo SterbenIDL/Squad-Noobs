@@ -1969,7 +1969,6 @@ export default function App() {
   // Modals from Main Menu
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [showCreditsModal, setShowCreditsModal] = useState<boolean>(false);
-  const [showExitModal, setShowExitModal] = useState<boolean>(false);
 
   // Match Options (Rounds & Timer: Added 120s option)
   const [roundsToWin, setRoundsToWin] = useState<number>(2); // 1 to 5 rounds
@@ -4152,23 +4151,6 @@ export default function App() {
                 <div className="flex flex-col">
                   <span className="text-white text-xs font-black uppercase tracking-wide">5. קרדיטים ל-IDL</span>
                   <span className="text-[10px] text-amber-200/80">יוצרים, מנוע המשחק והשראה</span>
-                </div>
-              </button>
-
-              {/* Button 6: יציאה מהמשחק */}
-              <button
-                onClick={() => {
-                  audio.playSelect();
-                  setShowExitModal(true);
-                }}
-                className="p-3.5 bg-red-950/60 hover:bg-red-900 border-2 border-red-700/60 hover:border-red-500 rounded-xl flex items-center gap-3 text-right font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-lg bg-red-500/20 border border-red-400 flex items-center justify-center shrink-0 group-hover:bg-red-500 transition">
-                  <LogOut className="w-5 h-5 text-red-300 group-hover:text-white" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-white text-xs font-black uppercase tracking-wide">6. יציאה מהמשחק</span>
-                  <span className="text-[10px] text-red-300/80">סיום הפעלה ומסך פרידה</span>
                 </div>
               </button>
             </div>

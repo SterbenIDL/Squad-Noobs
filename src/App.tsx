@@ -4,7 +4,6 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import SplashScreen from './SplashScreen';
 import streetBgUrl from './assets/images/battle_arena_street_1792947360218.jpg';
 import volcanoBgUrl from './assets/images/arena_volcanic_temple_1792948162772.jpg';
 import rooftopBgUrl from './assets/images/arena_rooftop_storm_1792948193530.jpg';
@@ -40,11 +39,15 @@ import {
   Minimize,
   Settings,
   Award,
+  LogOut,
   Sliders,
   Check,
   X,
   Radio,
-  Gamepad2
+  Gamepad2,
+  Repeat,
+  Users,
+  Box
 } from 'lucide-react';
 
 // Character Definitions
@@ -115,19 +118,19 @@ export interface SpriteActionFrames {
 }
 
 export const CUSTOM_SPRITE_SHEETS: Record<string, SpriteActionFrames> = {
-  // איבן (Ivan) - חשמל ורוח
+  // Ivan - Lightning & Wind
   ivan: {
     idle: '/assets/sprites/ivan_sprite.png',
   },
-  // עידן (Idan) - אש ואפלה
+  // Idan - Fire & Darkness
   idan: {
     idle: '/assets/sprites/idan_sprite.png',
   },
-  // פיליפ (Philip) - אור ואדמה
+  // Philip - Light & Earth
   philip: {
     idle: '/assets/sprites/philip_sprite.png',
   },
-  // רוני (Roni) - מים ודם
+  // Roni - Water & Blood
   roni: {
     idle: '/assets/sprites/roni_sprite.png',
   },
@@ -136,205 +139,269 @@ export const CUSTOM_SPRITE_SHEETS: Record<string, SpriteActionFrames> = {
 export const CHARACTERS: CharacterDef[] = [
   {
     id: 'ivan',
-    name: 'איבן (Ivan)',
-    hebrewName: 'איבן - חשמל ורוח',
-    title: 'מאסטר הסערה והחשמל',
-    element: 'חשמל ורוח',
-    element1: 'רוח',
-    element2: 'חשמל',
+    name: 'Ivan',
+    hebrewName: 'Ivan',
+    title: 'The Tempest Sovereign',
+    element: 'Thunder & Gale',
+    element1: 'Gale',
+    element2: 'Thunder',
     themeColor: '#38bdf8',
     secondaryColor: '#60a5fa',
     imageSrc: '/assets/aistudio/_____70edfa9b.jpeg',
     spriteSrc: '/assets/sprites/ivan_sprite.png',
     icon: Zap,
-    description: 'שולט בברקים חיים ורוחות טורנדו הרסניות. מכות רוח מהירות ומכות ברק שמימיות.',
+    description: 'Controls living thunderbolts and devastating gale whirlwinds with lightning-fast agility.',
     lightAttack1: {
-      name: 'להב רוח חותך (Wind Blade)',
-      hebrewName: 'להב רוח חותך',
-      element: 'רוח',
-      desc: 'חרמש רוח טורקיז מהיר שמחלק סלאש חד'
+      name: 'Wind Blade Slash',
+      hebrewName: 'Wind Blade',
+      element: 'Gale',
+      desc: 'Swift turquoise razor wind slash.'
     },
     lightAttack2: {
-      name: 'אגרוף ברק מחושמל (Thunder Jab)',
-      hebrewName: 'אגרוף ברק מחושמל',
-      element: 'חשמל',
-      desc: 'אגרוף חשמלי כחול-לבן עם ניצוצות שמשתק לרגע'
+      name: 'Thunder Jab',
+      hebrewName: 'Thunder Jab',
+      element: 'Thunder',
+      desc: 'Electrified rapid straight punch with stunning sparks.'
     },
     heavyAttack1: {
-      name: 'סופת הוריקן הודפת (Gale Blast)',
-      hebrewName: 'סופת הוריקן הודפת',
-      element: 'רוח',
-      desc: 'משב רוח טורנדו דוחף ומעיף את היריב אחורה'
+      name: 'Gale Hurricane Blast',
+      hebrewName: 'Gale Blast',
+      element: 'Gale',
+      desc: 'Violent tempest gust pushing and knocking the opponent backward.'
     },
     heavyAttack2: {
-      name: 'מכת ברק שמיים (Sky Lightning Crash)',
-      hebrewName: 'מכת ברק שמיים',
-      element: 'חשמל',
-      desc: 'ברק שמיים עבה שנוחת ומחשמל את הזירה'
+      name: 'Sky Lightning Crash',
+      hebrewName: 'Sky Lightning',
+      element: 'Thunder',
+      desc: 'Massive bolt of thunder descending from the heavens.'
     },
     ultimate: {
-      name: 'טורנדו ברקים אימתני (Thunderstorm Tornado)',
-      hebrewName: 'טורנדו ברקים אימתני',
-      element: 'חשמל ורוח',
-      desc: 'יורד טורנדו ענקי עם מכות ברק שמימיות שמושך וממלא את המסך'
+      name: 'Thunderstorm Tornado',
+      hebrewName: 'Thunderstorm Tornado',
+      element: 'Thunder & Gale',
+      desc: 'Summons a colossal cyclone charged with catastrophic lightning strikes.'
     },
-    lightAttackName: 'רוח: להב חותך | חשמל: אגרוף ברק',
-    heavyAttackName: 'רוח: הוריקן הדף | חשמל: ברק שמיים',
-    ultimateName: 'טורנדו ברקים אימתני (Thunderstorm Tornado)',
+    lightAttackName: 'Gale: Wind Blade | Thunder: Thunder Jab',
+    heavyAttackName: 'Gale: Hurricane Blast | Thunder: Sky Lightning',
+    ultimateName: 'Thunderstorm Tornado',
     projectileType: 'lightning',
     stats: { power: 8, speed: 10, defense: 7 }
   },
   {
     id: 'idan',
-    name: 'עידן (Idan)',
-    hebrewName: 'עידן - אש ואפלה',
-    title: 'אגרוף התופת האפלה',
-    element: 'אש ואפלה',
-    element1: 'אש',
-    element2: 'אפלה',
+    name: 'Idan',
+    hebrewName: 'Idan',
+    title: 'Fist of the Abyssal Flame',
+    element: 'Hellfire & Nether Void',
+    element1: 'Hellfire',
+    element2: 'Nether Void',
     themeColor: '#f97316',
     secondaryColor: '#ef4444',
     imageSrc: '/assets/aistudio/_____b3da8735.jpeg',
     spriteSrc: '/assets/sprites/idan_sprite.png',
     icon: Flame,
-    description: 'לוחם רחוב בעל כוח אש אפלה ולהבות שחורות. אגרופים עוצמתיים ונזק הרסני.',
+    description: 'Fierce brawler wielding Nether hellfire and dark gravitational void energy.',
     lightAttack1: {
-      name: 'אגרוף ניצוץ אש (Fire Spark Jab)',
-      hebrewName: 'אגרוף ניצוץ אש',
-      element: 'אש',
-      desc: 'מהלומת להבה כתומה מהירה עם גיצי אש'
+      name: 'Fire Spark Jab',
+      hebrewName: 'Fire Spark',
+      element: 'Hellfire',
+      desc: 'Rapid flaming strike releasing blazing orange embers.'
     },
     lightAttack2: {
-      name: 'טופר אפלה מהיר (Dark Shadow Claw)',
-      hebrewName: 'טופר אפלה מהיר',
-      element: 'אפלה',
-      desc: 'מכת טופר חושך עם הילה סגולה-שחורה'
+      name: 'Dark Shadow Claw',
+      hebrewName: 'Dark Claw',
+      element: 'Nether Void',
+      desc: 'Dark void claw slash enveloped in a shadowy purple aura.'
     },
     heavyAttack1: {
-      name: 'כדור אש תופת מתפוצץ (Hellfire Blast)',
-      hebrewName: 'כדור אש תופת מתפוצץ',
-      element: 'אש',
-      desc: 'כדור אש ענק מתפרץ קדימה ומתפוצץ בלשונות להבה'
+      name: 'Hellfire Blast',
+      hebrewName: 'Hellfire Blast',
+      element: 'Hellfire',
+      desc: 'Erupting inferno fireball detonating in roaring flames.'
     },
     heavyAttack2: {
-      name: 'בור כבידה וגל אפל (Abyssal Void Slam)',
-      hebrewName: 'בור כבידה וגל אפל',
-      element: 'אפלה',
-      desc: 'גל הדף שחור-סגול מעוות כבידה שמועך את היריב'
+      name: 'Abyssal Void Slam',
+      hebrewName: 'Void Slam',
+      element: 'Nether Void',
+      desc: 'Gravitational shockwave crushing the opponent to the ground.'
     },
     ultimate: {
-      name: 'כדור חושך ואש מפוצץ כל (Nether Dark Void Nova)',
-      hebrewName: 'כדור חושך ואש מפוצץ כל',
-      element: 'אש ואפלה',
-      desc: 'משחרר כדור חושך שמסביבו אש ומפוצץ הכל בעוצמה מחרישת אוזניים'
+      name: 'Nether Dark Void Nova',
+      hebrewName: 'Dark Void Nova',
+      element: 'Hellfire & Nether Void',
+      desc: 'Unleashes a dark void sphere encased in roaring hellfire that obliterates everything.'
     },
-    lightAttackName: 'אש: ניצוץ אש | אפלה: טופר צללים',
-    heavyAttackName: 'אש: כדור תופת | אפלה: בור כבידה',
-    ultimateName: 'כדור חושך ואש מפוצץ כל (Nether Dark Void Nova)',
+    lightAttackName: 'Hellfire: Spark Jab | Void: Shadow Claw',
+    heavyAttackName: 'Hellfire: Inferno Blast | Void: Abyssal Slam',
+    ultimateName: 'Nether Dark Void Nova',
     projectileType: 'fireball',
     stats: { power: 10, speed: 7, defense: 8 }
   },
   {
     id: 'philip',
-    name: 'פיליפ (Philip)',
-    hebrewName: 'פיליפ - אור ואדמה',
-    title: 'טיטאן הקריסטל והשמש',
-    element: 'אור ואדמה',
-    element1: 'אור',
-    element2: 'אדמה',
+    name: 'Philip',
+    hebrewName: 'Philip',
+    title: 'Titan of Sun and Crystal',
+    element: 'Solar Light & Earth Crystal',
+    element1: 'Solar Light',
+    element2: 'Earth Crystal',
     themeColor: '#eab308',
     secondaryColor: '#f59e0b',
     imageSrc: '/assets/aistudio/______9c89476b.jpeg',
     spriteSrc: '/assets/sprites/philip_sprite.png',
     icon: Mountain,
-    description: 'משלב כוחות קריסטל אבן עתיקים והקרנת אור שמש סולארי. הגנה איתנה ומכות מחץ.',
+    description: 'Combines ancient geo-crystal resilience and blazing solar radiation with impenetrable defense.',
     lightAttack1: {
-      name: 'הבזק אור סולארי (Solar Flash Strike)',
-      hebrewName: 'הבזק אור סולארי',
-      element: 'אור',
-      desc: 'אגרוף אור בוהק בזהב ולבן שמעוור את היריב'
+      name: 'Solar Flash Strike',
+      hebrewName: 'Solar Flash',
+      element: 'Solar Light',
+      desc: 'Blinding golden light punch with dazzling solar rays.'
     },
     lightAttack2: {
-      name: 'בעיטת קריסטל אבן (Crystal Stone Kick)',
-      hebrewName: 'בעיטת קריסטל אבן',
-      element: 'אדמה',
-      desc: 'מכת אדמה מוצקה שיוצרת רסיסי קריסטל חדים'
+      name: 'Crystal Stone Kick',
+      hebrewName: 'Crystal Kick',
+      element: 'Earth Crystal',
+      desc: 'Heavy geo-kick scattering sharp crystal shards.'
     },
     heavyAttack1: {
-      name: 'עמוד אור שמש קורן (Radiant Light Pillar)',
-      hebrewName: 'עמוד אור שמש קורן',
-      element: 'אור',
-      desc: 'עמוד אור שמש בוהק שנוחת מלמעלה ומאדה את המטרה'
+      name: 'Radiant Light Pillar',
+      hebrewName: 'Light Pillar',
+      element: 'Solar Light',
+      desc: 'Blazing pillar of solar energy striking from the heavens.'
     },
     heavyAttack2: {
-      name: 'גייזר קוצי אדמה (Earth Crystal Geyser)',
-      hebrewName: 'גייזר קוצי אדמה',
-      element: 'אדמה',
-      desc: 'חניתות אדמה וקריסטלים שבוקעים מהרצפה ומשגרים רסיס אבן'
+      name: 'Earth Crystal Geyser',
+      hebrewName: 'Crystal Geyser',
+      element: 'Earth Crystal',
+      desc: 'Sharp crystal stalagmites erupting from the arena floor.'
     },
     ultimate: {
-      name: 'קרן אור סולארית ענקית (Hyper Solar Beam)',
-      hebrewName: 'קרן אור סולארית ענקית',
-      element: 'אור ואדמה',
-      desc: 'יורה קרן אור גדולה וחזקה שחוצה את כל המסך ומאירה הכל בצהוב-לבן מסנוור'
+      name: 'Hyper Solar Beam',
+      hebrewName: 'Hyper Solar Beam',
+      element: 'Solar Light & Earth Crystal',
+      desc: 'Fires a colossal focused beam of pure sunlight piercing across the entire battlefield.'
     },
-    lightAttackName: 'אור: הבזק סולארי | אדמה: בעיטת קריסטל',
-    heavyAttackName: 'אור: עמוד אור שמש | אדמה: גייזר קוצים',
-    ultimateName: 'קרן אור סולארית ענקית (Hyper Solar Beam)',
+    lightAttackName: 'Solar: Flash Strike | Crystal: Stone Kick',
+    heavyAttackName: 'Solar: Light Pillar | Crystal: Earth Geyser',
+    ultimateName: 'Hyper Solar Beam',
     projectileType: 'crystal',
     stats: { power: 9, speed: 6, defense: 10 }
   },
   {
     id: 'roni',
-    name: 'רוני (Roni)',
-    hebrewName: 'רוני - מים ודם',
-    title: 'אדון המים והדם',
-    element: 'מים ודם',
-    element1: 'מים',
-    element2: 'דם',
+    name: 'Roni',
+    hebrewName: 'Roni',
+    title: 'Lord of Torrent and Blood',
+    element: 'Water & Crimson Blood',
+    element1: 'Water',
+    element2: 'Crimson Blood',
     themeColor: '#06b6d4',
     secondaryColor: '#e11d48',
     imageSrc: '/assets/aistudio/_____d5c8a85b.jpeg',
     spriteSrc: '/assets/sprites/roni_sprite.png',
     icon: Droplets,
-    description: 'מניפולטור של זרמי מים חיים וקרישי דם עוצמתיים. סגנון לחימה זורם וקטלני.',
+    description: 'Master of fluid oceanic torrents and lethal piercing crimson blood blades.',
     lightAttack1: {
-      name: 'שוט סילון מים (Aqua Jet Whip)',
-      hebrewName: 'שוט סילון מים',
-      element: 'מים',
-      desc: 'שוט מים מהיר בצבע טורקיז עמוק'
+      name: 'Aqua Jet Whip',
+      hebrewName: 'Aqua Whip',
+      element: 'Water',
+      desc: 'High-pressure cyan water whip strike.'
     },
     lightAttack2: {
-      name: 'דקירת קוץ דם (Blood Needle Pierce)',
-      hebrewName: 'דקירת קוץ דם',
-      element: 'דם',
-      desc: 'דקירת דם ארגמנית מהירה שחודרת הגנות'
+      name: 'Blood Needle Pierce',
+      hebrewName: 'Blood Needle',
+      element: 'Crimson Blood',
+      desc: 'Swift crimson needle piercing through enemy defenses.'
     },
     heavyAttack1: {
-      name: 'גל צונאמי מתנפץ (Tsunami Wave Crash)',
-      hebrewName: 'גל צונאמי מתנפץ',
-      element: 'מים',
-      desc: 'גל מים שוצף ומחץ שמתגלגל קדימה ושוטף את הזירה'
+      name: 'Tsunami Wave Crash',
+      hebrewName: 'Tsunami Wave',
+      element: 'Water',
+      desc: 'Crushing tidal wave rolling across the battlefield.'
     },
     heavyAttack2: {
-      name: 'מגל דם רותח (Crimson Blood Scythe)',
-      hebrewName: 'מגל דם רותח',
-      element: 'דם',
-      desc: 'מגל דם ענקי שמסובב להב דם רותח ומשסף את היריב'
+      name: 'Crimson Blood Scythe',
+      hebrewName: 'Blood Scythe',
+      element: 'Crimson Blood',
+      desc: 'Spinning scythe of boiling crimson blood slicing the opponent.'
     },
     ultimate: {
-      name: 'חץ מים ודם קטלני (Blood Hydro Piercing Arrow)',
-      hebrewName: 'חץ מים ודם קטלני',
-      element: 'מים ודם',
-      desc: 'יורה חץ מים שמסביבו דם - חץ מים ענקי שסביבו ספירלות דם מסתחררות שמשפדות את היריב'
+      name: 'Blood Hydro Piercing Arrow',
+      hebrewName: 'Hydro Blood Arrow',
+      element: 'Water & Crimson Blood',
+      desc: 'Fires a giant piercing water arrow surrounded by double-helix blood spirals.'
     },
-    lightAttackName: 'מים: שוט סילון | דם: קוץ דם חודר',
-    heavyAttackName: 'מים: גל צונאמי | דם: מגל דם רותח',
-    ultimateName: 'חץ מים ודם קטלני (Blood Hydro Piercing Arrow)',
+    lightAttackName: 'Water: Aqua Whip | Blood: Needle Pierce',
+    heavyAttackName: 'Water: Tsunami Wave | Blood: Blood Scythe',
+    ultimateName: 'Blood Hydro Piercing Arrow',
     projectileType: 'water',
     stats: { power: 9, speed: 8, defense: 8 }
   }
 ];
+
+// Pre-cached Fighter Image & Sprite Asset Cache for Instant Tag Switching
+export interface FighterCachedAssets {
+  image: HTMLImageElement;
+  sprite: HTMLImageElement;
+  customSprites: {
+    idle: HTMLImageElement[];
+    walk: HTMLImageElement[];
+    attack: HTMLImageElement[];
+    heavy: HTMLImageElement[];
+    hurt: HTMLImageElement[];
+    block: HTMLImageElement[];
+    ultimate: HTMLImageElement[];
+  };
+}
+
+export const FIGHTER_ASSET_CACHE: Record<string, FighterCachedAssets> = {};
+
+export function preloadAllFighterAssets() {
+  if (typeof window === 'undefined') return;
+
+  const loadList = (items?: string | string[]): HTMLImageElement[] => {
+    if (!items) return [];
+    const arr = Array.isArray(items) ? items : [items];
+    return arr
+      .filter((src) => typeof src === 'string' && src.trim().length > 0)
+      .map((src) => {
+        const img = new Image();
+        img.src = src;
+        return img;
+      });
+  };
+
+  CHARACTERS.forEach((char) => {
+    if (!FIGHTER_ASSET_CACHE[char.id]) {
+      const img = new Image();
+      img.src = char.imageSrc;
+
+      const spr = new Image();
+      spr.src = char.spriteSrc;
+
+      const config = CUSTOM_SPRITE_SHEETS[char.id] || {};
+      const customSprites = {
+        idle: loadList(config.idle),
+        walk: loadList(config.walk),
+        attack: loadList(config.attack),
+        heavy: loadList(config.heavy),
+        hurt: loadList(config.hurt),
+        block: loadList(config.block),
+        ultimate: loadList(config.ultimate),
+      };
+
+      FIGHTER_ASSET_CACHE[char.id] = {
+        image: img,
+        sprite: spr,
+        customSprites,
+      };
+    }
+  });
+}
+
+if (typeof window !== 'undefined') {
+  preloadAllFighterAssets();
+}
 
 // Arena Stages
 export interface StageDef {
@@ -350,24 +417,24 @@ export const STAGES: StageDef[] = [
   {
     id: 'neo_tokyo',
     name: 'Neo-Tokyo Alley',
-    hebrewName: 'סמטת ניאו-טוקיו',
-    description: 'זירת רחוב אורבנית עם שלטי ניאון זוהרים, גשם דק ואספלט רטוב.',
+    hebrewName: 'Neo-Tokyo Alley',
+    description: 'Urban street alley with glowing neon signs, light rain, and wet asphalt.',
     bgUrl: streetBgUrl,
     themeColor: '#38bdf8'
   },
   {
     id: 'volcano_dojo',
     name: 'Infernal Lava Temple',
-    hebrewName: 'מקדש הלבה והתופת',
-    description: 'דוג׳ו עתיק מוקף בלבה רותחת, גיצי אש ועמודי אבן שחורים.',
+    hebrewName: 'Infernal Lava Temple',
+    description: 'Ancient stone sanctuary surrounded by bubbling magma, embers, and dark obsidian pillars.',
     bgUrl: volcanoBgUrl,
     themeColor: '#f97316'
   },
   {
     id: 'thunder_rooftop',
     name: 'Storm Rooftop Helipad',
-    hebrewName: 'מנחת הסערה והרעמים',
-    description: 'גג גורד שחקים בסופת ברקים אימתנית, ענני סערה ורוחות עזות.',
+    hebrewName: 'Storm Rooftop Helipad',
+    description: 'Skyscraper helipad caught in a catastrophic thunderstorm with howling winds and thunder.',
     bgUrl: rooftopBgUrl,
     themeColor: '#eab308'
   }
@@ -386,8 +453,8 @@ export const ANIME_OST_TRACKS: AnimeOSTTrack[] = [
   {
     id: 'one_piece_we_are',
     title: 'One Piece: We Are! (Opening 1)',
-    animeName: 'וואן פיס (One Piece)',
-    artistDesc: 'הפתיח האגדי בביצוע Hiroshi Kitadani',
+    animeName: 'One Piece',
+    artistDesc: 'Legendary Opening performed by Hiroshi Kitadani',
     srcUrls: [
       'https://archive.org/download/tvtunes_20333/One%20Piece%20-%20We%20Are%20-%20Full.mp3',
       'https://v.animethemes.moe/OnePiece-OP1.webm'
@@ -396,8 +463,8 @@ export const ANIME_OST_TRACKS: AnimeOSTTrack[] = [
   {
     id: 'one_piece_overtaken',
     title: 'One Piece: Overtaken (Walk to Arlong Park Theme)',
-    animeName: 'וואן פיס (One Piece)',
-    artistDesc: 'שיר הקרב המפורסם ביותר (מצעד התופים והחצוצרות האפי)',
+    animeName: 'One Piece',
+    artistDesc: 'Iconic battle march theme with epic horns and drums',
     srcUrls: [
       'https://archive.org/download/youtube-daFi4MScfl8/daFi4MScfl8.mp4',
       'https://archive.org/download/Overtaken/Overtaken.mp3'
@@ -406,8 +473,8 @@ export const ANIME_OST_TRACKS: AnimeOSTTrack[] = [
   {
     id: 'fairy_tail_main',
     title: 'Fairy Tail: Main Battle Theme (Yasuharu Takanashi)',
-    animeName: 'פיירי טייל (Fairy Tail)',
-    artistDesc: 'שיר הנושא הרשמי והאיקוני (Fairy Tail Main Theme)',
+    animeName: 'Fairy Tail',
+    artistDesc: 'Official epic battle theme composed by Yasuharu Takanashi',
     srcUrls: [
       'https://archive.org/download/fairytailmainthememetalver./FAIRY%20TAIL%20Main%20Theme%20-METAL%20ver.-.mp3',
       'https://v.animethemes.moe/FairyTail-OP1.webm'
@@ -416,8 +483,8 @@ export const ANIME_OST_TRACKS: AnimeOSTTrack[] = [
   {
     id: 'demon_slayer',
     title: 'Demon Slayer: Gurenge (LiSA)',
-    animeName: 'דיימון סלייר (קוטל השדים)',
-    artistDesc: 'פתיח האנימה הרשמי בביצוע LiSA',
+    animeName: 'Demon Slayer: Kimetsu no Yaiba',
+    artistDesc: 'Official high-energy anime theme performed by LiSA',
     srcUrls: [
       'https://v.animethemes.moe/KimetsuNoYaiba-OP1.webm',
       'https://v.animethemes.moe/KimetsuNoYaiba-OP1-NCBD1080.webm'
@@ -426,8 +493,8 @@ export const ANIME_OST_TRACKS: AnimeOSTTrack[] = [
   {
     id: 'attack_on_titan',
     title: 'Attack on Titan: Guren no Yumiya (Linked Horizon)',
-    animeName: 'מתקפת הטיטאנים (Shingeki no Kyojin)',
-    artistDesc: 'שיר הנושא האפי והסוחף של הטיטאנים',
+    animeName: 'Attack on Titan (Shingeki no Kyojin)',
+    artistDesc: 'Epic orchestral battle anthem by Linked Horizon',
     srcUrls: [
       'https://archive.org/download/attack-on-titan-march-to-freedom/01%20Guren%20no%20Yumiya.mp3',
       'https://v.animethemes.moe/ShingekiNoKyojin-OP1.webm'
@@ -566,6 +633,10 @@ class ArcadeAudioEngine {
       osc.start(now);
       osc.stop(now + (isHeavy ? 0.28 : 0.18));
     } catch {}
+  }
+
+  playHeavyHit() {
+    this.playHit(true);
   }
 
   playBlock() {
@@ -771,6 +842,83 @@ class ArcadeAudioEngine {
     }, 1200);
   }
 
+  speakCharacter(charId: string, text: string) {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window) || !this.soundEnabled) return;
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      const voices = window.speechSynthesis.getVoices();
+      const enVoices = voices.filter((v) => v.lang.startsWith('en'));
+
+      if (charId === 'idan') {
+        u.pitch = 0.68;
+        u.rate = 0.95;
+        const v = enVoices.find((v) => v.name.includes('Male') || v.name.includes('David') || v.name.includes('James'));
+        if (v) u.voice = v;
+      } else if (charId === 'philip') {
+        u.pitch = 0.88;
+        u.rate = 0.92;
+        const v = enVoices.find((v) => v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Alex'));
+        if (v) u.voice = v;
+      } else if (charId === 'ivan') {
+        u.pitch = 1.12;
+        u.rate = 1.05;
+        const v = enVoices.find((v) => v.name.includes('George') || v.name.includes('Guy') || v.name.includes('Male'));
+        if (v) u.voice = v;
+      } else if (charId === 'roni') {
+        u.pitch = 0.78;
+        u.rate = 0.92;
+        const v = enVoices.find((v) => v.name.includes('Mark') || v.name.includes('Daniel') || v.name.includes('Male'));
+        if (v) u.voice = v;
+      }
+      u.volume = 1.0;
+      window.speechSynthesis.speak(u);
+    } catch {}
+  }
+
+  playTagSwitch() {
+    this.playTone(520, 'sine', 0.1, 0.25);
+    setTimeout(() => this.playTone(840, 'triangle', 0.18, 0.3), 70);
+  }
+
+  playAssistCall() {
+    this.playTone(400, 'sawtooth', 0.08, 0.3);
+    setTimeout(() => this.playTone(720, 'square', 0.15, 0.25), 60);
+  }
+
+  playPropThrow() {
+    this.playTone(320, 'sawtooth', 0.12, 0.35);
+  }
+
+  playPropSmash() {
+    if (!this.soundEnabled || !this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      const osc1 = this.ctx.createOscillator();
+      const gain1 = this.ctx.createGain();
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(260, now);
+      osc1.frequency.exponentialRampToValueAtTime(30, now + 0.35);
+      gain1.gain.setValueAtTime(0.7 * this.sfxVolume, now);
+      gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+      osc1.connect(gain1);
+      gain1.connect(this.ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.35);
+
+      const osc2 = this.ctx.createOscillator();
+      const gain2 = this.ctx.createGain();
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(950, now);
+      osc2.frequency.exponentialRampToValueAtTime(140, now + 0.2);
+      gain2.gain.setValueAtTime(0.4 * this.sfxVolume, now);
+      gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      osc2.connect(gain2);
+      gain2.connect(this.ctx.destination);
+      osc2.start(now);
+      osc2.stop(now + 0.2);
+    } catch {}
+  }
+
   playKO() {
     if (!this.soundEnabled || !this.ctx) return;
     try {
@@ -801,77 +949,230 @@ export interface PreFightDialogue {
 export const CHARACTER_DIALOGUES: { [p1Id: string]: { [p2Id: string]: PreFightDialogue } } = {
   idan: {
     philip: {
-      p1Line: 'האור שלך ייבלע בתוך התופת והאפלה שלי, פיליפ!',
-      p2Line: 'אור השמש והקריסטל שלי יטהרו כל צל שתעז להטיל, עידן!'
+      p1Line: 'Your solar glow will drown inside my Nether Void, Philip!',
+      p2Line: 'My blazing sun and sacred crystal will purge every shadow you cast, Idan!'
     },
     ivan: {
-      p1Line: 'האש שלי רק תתעצם מהסופות שלך, איבן!',
-      p2Line: 'הברקים והטורנדו שלי יקרעו את הלהבות שלך לרסיסים!'
+      p1Line: 'My nether hellfire only burns hotter from your gale winds, Ivan!',
+      p2Line: 'My lightning bolts and cyclones will tear your flames to cinders, Idan!'
     },
     roni: {
-      p1Line: 'להבות התופת שלי ייבשו את המים שלך וירתיחו את הדם!',
-      p2Line: 'הדם רותח ומי הצונאמי יכבו אותך תוך שניות, עידן!'
+      p1Line: 'Hellfire will boil your oceans and sear your blood to vapor, Roni!',
+      p2Line: 'The crimson tide is rising, and tidal waters will quench your flame forever!'
     },
     idan: {
-      p1Line: 'יש מקום רק לשליט אש ואפלה אחד בסקוואד נובס!',
-      p2Line: 'נראה של מי כדור החושך האמיתי!'
+      p1Line: 'There is only room for one Nether sovereign in Squad Noobs!',
+      p2Line: "Let's witness whose Dark Void Nova commands true supremacy!"
     }
   },
   philip: {
     idan: {
-      p1Line: 'אור השמש והקריסטל שלי יטהרו כל צל שתעז להטיל, עידן!',
-      p2Line: 'האור שלך ייבלע בתוך התופת והאפלה שלי, פיליפ!'
+      p1Line: 'My blazing sun and sacred crystal will purge every shadow you cast, Idan!',
+      p2Line: 'Your solar glow will drown inside my Nether Void, Philip!'
     },
     ivan: {
-      p1Line: 'גייזר קריסטל יספוג כל ברק שתנסה להנחית!',
-      p2Line: 'נראה אם האדמה שלך תחזיק מעמד מול סופת ברקים שמימית!'
+      p1Line: 'Crystal geysers will ground every stray thunderbolt you throw, Ivan!',
+      p2Line: "Let's see if your earth can withstand a heavenly storm cyclone!"
     },
     roni: {
-      p1Line: 'עמוד השמש ייבש את המים, וחומת האדמה תעצור כל חץ דם!',
-      p2Line: 'חץ הדם של סילוני המים שלי יחתוך ישר דרך הקריסטל שלך!'
+      p1Line: 'Solar radiance will evaporate water, and crystal shields shatter blood spears!',
+      p2Line: 'My crimson water arrow will pierce right through your crystal armor!'
     },
     philip: {
-      p1Line: 'רק טיטאן שמש אחד ראוי לעמוד בזירה!',
-      p2Line: 'הקריסטל שלי מלוטש וחזק יותר משלך!'
+      p1Line: 'Only one true Solar Titan shall reign over this arena!',
+      p2Line: 'My crystal is refined and unbreakable. Prepare yourself!'
     }
   },
   ivan: {
     idan: {
-      p1Line: 'הברקים והטורנדו שלי יקרעו את הלהבות שלך לרסיסים!',
-      p2Line: 'האש שלי רק תתעצם מהסופות שלך, איבן!'
+      p1Line: 'My lightning bolts and cyclones will tear your flames to cinders, Idan!',
+      p2Line: 'My nether hellfire only burns hotter from your gale winds, Ivan!'
     },
     philip: {
-      p1Line: 'נראה אם האדמה שלך תחזיק מעמד מול סופת ברקים שמימית!',
-      p2Line: 'גייזר קריסטל יספוג כל ברק שתנסה להנחית!'
+      p1Line: "Let's see if your earth can withstand a heavenly storm cyclone, Philip!",
+      p2Line: 'Crystal geysers will ground every stray thunderbolt you throw, Ivan!'
     },
     roni: {
-      p1Line: 'ברקים במים מייצרים פיצוץ קטלני! אתה בעצמך מוליך החשמל שלי!',
-      p2Line: 'גל המים שלי ישאב את הברקים שלך ויטביע אותך במעמקים!'
+      p1Line: 'Lightning in water unleashes lethal shockwaves! You empower my thunder!',
+      p2Line: 'My ocean depths will swallow your storm and drag you to the abyss!'
     },
     ivan: {
-      p1Line: 'הסופה שלי תשאיר רק ענן אבק מהטורנדו שלך!',
-      p2Line: 'ברק שמימי אמיתי מכה רק פעם אחת – וזה אני!'
+      p1Line: 'True heavenly thunder only strikes once — and that is me!',
+      p2Line: 'My gale winds will disperse your storm into thin mist!'
     }
   },
   roni: {
     idan: {
-      p1Line: 'הדם רותח ומי הצונאמי יכבו אותך תוך שניות, עידן!',
-      p2Line: 'להבות התופת שלי ייבשו את המים שלך וירתיחו את הדם!'
+      p1Line: 'The crimson tide is rising, and tidal waters will quench your flame forever!',
+      p2Line: 'Hellfire will boil your oceans and sear your blood to vapor, Roni!'
     },
     philip: {
-      p1Line: 'חץ הדם של סילוני המים שלי יחתוך ישר דרך הקריסטל שלך!',
-      p2Line: 'עמוד השמש ייבש את המים, וחומת האדמה תעצור כל חץ דם!'
+      p1Line: 'My crimson water arrow will pierce right through your crystal armor, Philip!',
+      p2Line: 'Solar radiance will evaporate water, and crystal shields shatter blood spears!'
     },
     ivan: {
-      p1Line: 'גל המים שלי ישאב את הברקים שלך ויטביע אותך במעמקים!',
-      p2Line: 'ברקים במים מייצרים פיצוץ קטלני! אתה בעצמך מוליך החשמל שלי!'
+      p1Line: 'My ocean depths will swallow your storm and drag you to the abyss, Ivan!',
+      p2Line: 'Lightning in water unleashes lethal shockwaves! You empower my thunder!'
     },
     roni: {
-      p1Line: 'הדם שלי חם ומהיר יותר מכל מה שאי פעם ראית!',
-      p2Line: 'נראה איזה סילון מים יפגע ראשון בלב!'
+      p1Line: 'My blood runs faster and hotter than anything you have ever faced!',
+      p2Line: 'Let us see whose torrent strikes the lethal blow first!'
     }
   }
 };
+
+// Interactive Stage Props System
+export interface StageProp {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  type: 'generator' | 'dumpster' | 'magma_urn' | 'pillar' | 'radar_console' | 'fuel_crate';
+  color: string;
+  glowColor: string;
+  isBroken: boolean;
+  isFlying: boolean;
+  vx: number;
+  vy: number;
+  thrownBy: 'p1' | 'p2' | null;
+}
+
+export const generateStageProps = (stageId: string, groundY: number): StageProp[] => {
+  if (stageId === 'neo_tokyo') {
+    return [
+      {
+        id: 'prop_gen',
+        name: 'Neon Generator',
+        x: 230,
+        y: groundY - 65,
+        width: 55,
+        height: 65,
+        type: 'generator',
+        color: '#0284c7',
+        glowColor: '#38bdf8',
+        isBroken: false,
+        isFlying: false,
+        vx: 0,
+        vy: 0,
+        thrownBy: null
+      },
+      {
+        id: 'prop_dump',
+        name: 'Steel Dumpster',
+        x: 740,
+        y: groundY - 70,
+        width: 65,
+        height: 70,
+        type: 'dumpster',
+        color: '#334155',
+        glowColor: '#64748b',
+        isBroken: false,
+        isFlying: false,
+        vx: 0,
+        vy: 0,
+        thrownBy: null
+      }
+    ];
+  } else if (stageId === 'volcano_dojo') {
+    return [
+      {
+        id: 'prop_urn',
+        name: 'Magma Fire Urn',
+        x: 220,
+        y: groundY - 60,
+        width: 50,
+        height: 60,
+        type: 'magma_urn',
+        color: '#b91c1c',
+        glowColor: '#f97316',
+        isBroken: false,
+        isFlying: false,
+        vx: 0,
+        vy: 0,
+        thrownBy: null
+      },
+      {
+        id: 'prop_pillar',
+        name: 'Obsidian Spire',
+        x: 760,
+        y: groundY - 95,
+        width: 50,
+        height: 95,
+        type: 'pillar',
+        color: '#1e1b4b',
+        glowColor: '#7c3aed',
+        isBroken: false,
+        isFlying: false,
+        vx: 0,
+        vy: 0,
+        thrownBy: null
+      }
+    ];
+  } else {
+    return [
+      {
+        id: 'prop_radar',
+        name: 'Radar Terminal',
+        x: 240,
+        y: groundY - 75,
+        width: 55,
+        height: 75,
+        type: 'radar_console',
+        color: '#0369a1',
+        glowColor: '#38bdf8',
+        isBroken: false,
+        isFlying: false,
+        vx: 0,
+        vy: 0,
+        thrownBy: null
+      },
+      {
+        id: 'prop_fuel',
+        name: 'Hazard Fuel Crate',
+        x: 750,
+        y: groundY - 60,
+        width: 60,
+        height: 60,
+        type: 'fuel_crate',
+        color: '#ca8a04',
+        glowColor: '#facc15',
+        isBroken: false,
+        isFlying: false,
+        vx: 0,
+        vy: 0,
+        thrownBy: null
+      }
+    ];
+  }
+};
+
+// Persistent Blood Decal on Ground
+export interface BloodDecal {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: string;
+  alpha: number;
+  splatters: { dx: number; dy: number; r: number }[];
+}
+
+// Active Assist Partner Fighter
+export interface ActiveAssistFighter {
+  id: number;
+  ownerId: 'p1' | 'p2';
+  character: CharacterDef;
+  x: number;
+  y: number;
+  vx: number;
+  facing: 'left' | 'right';
+  phase: 'ENTER' | 'ATTACK' | 'EXIT';
+  timer: number;
+  hasHit: boolean;
+  elementColor: string;
+}
 
 // Projectile Definition
 interface Projectile {
@@ -959,7 +1260,7 @@ export interface AttackFrameData {
   chipPercent: number;
 }
 
-export const MAX_FIGHTER_HEALTH = 100;
+export const MAX_FIGHTER_HEALTH = 200;
 
 export const ATTACK_FRAME_DATA: { [key: string]: AttackFrameData } = {
   LIGHT_1: {
@@ -1146,6 +1447,12 @@ class CanvasFighter {
   };
 
   loadCustomSprites() {
+    const cached = FIGHTER_ASSET_CACHE[this.character.id];
+    if (cached) {
+      this.customSpriteImages = cached.customSprites;
+      return;
+    }
+
     const config = CUSTOM_SPRITE_SHEETS[this.character.id];
     if (!config) return;
 
@@ -1173,6 +1480,13 @@ class CanvasFighter {
   }
 
   loadImage() {
+    const cached = FIGHTER_ASSET_CACHE[this.character.id];
+    if (cached) {
+      this.image = cached.image;
+      this.spriteImage = cached.sprite;
+      return;
+    }
+
     const img = new Image();
     img.src = this.character.imageSrc;
     this.image = img;
@@ -1956,16 +2270,12 @@ class CanvasFighter {
 }
 
 type GameMode = 'PVP' | 'VS_AI' | 'TRAINING';
-type GameScreen = 'SPLASH' | 'TITLE_MENU' | 'CHARACTER_SELECT' | 'STAGE_SELECT' | 'VS_SCREEN' | 'BATTLE' | 'GAME_OVER';
+type GameScreen = 'TITLE_MENU' | 'CHARACTER_SELECT' | 'STAGE_SELECT' | 'VS_SCREEN' | 'BATTLE' | 'GAME_OVER';
 
 export default function App() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const [screen, setScreen] = useState<GameScreen>(() =>
-    typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('nosplash')
-      ? 'TITLE_MENU'
-      : 'SPLASH'
-  );
+  const [screen, setScreen] = useState<GameScreen>('TITLE_MENU');
   const [gameMode, setGameMode] = useState<GameMode>('PVP');
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -1973,6 +2283,7 @@ export default function App() {
   // Modals from Main Menu
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [showCreditsModal, setShowCreditsModal] = useState<boolean>(false);
+  const [showExitModal, setShowExitModal] = useState<boolean>(false);
 
   // Match Options (Rounds & Timer: Added 120s option)
   const [roundsToWin, setRoundsToWin] = useState<number>(2); // 1 to 5 rounds
@@ -1986,11 +2297,45 @@ export default function App() {
   const [trainingTotalDamage, setTrainingTotalDamage] = useState<number>(0);
   const [ultNotice, setUltNotice] = useState<string | null>(null);
 
-  // Character selection
-  const [p1SelectedIdx, setP1SelectedIdx] = useState<number>(0);
-  const [p2SelectedIdx, setP2SelectedIdx] = useState<number>(1);
+  // Character & Assist selection (Guaranteed distinct fighters)
+  const [p1SelectedIdx, setP1SelectedIdx] = useState<number>(0); // Ivan
+  const [p1AssistIdx, setP1AssistIdx] = useState<number>(1); // Idan
+  const [p2SelectedIdx, setP2SelectedIdx] = useState<number>(2); // Philip
+  const [p2AssistIdx, setP2AssistIdx] = useState<number>(3); // Roni
   const [p1Locked, setP1Locked] = useState<boolean>(false);
   const [p2Locked, setP2Locked] = useState<boolean>(false);
+
+  // Synchronized Refs to avoid stale closures in event listeners & game loops
+  const p1SelectedIdxRef = useRef<number>(0);
+  const p1AssistIdxRef = useRef<number>(1);
+  const p2SelectedIdxRef = useRef<number>(2);
+  const p2AssistIdxRef = useRef<number>(3);
+
+  useEffect(() => {
+    p1SelectedIdxRef.current = p1SelectedIdx;
+  }, [p1SelectedIdx]);
+  useEffect(() => {
+    p1AssistIdxRef.current = p1AssistIdx;
+  }, [p1AssistIdx]);
+  useEffect(() => {
+    p2SelectedIdxRef.current = p2SelectedIdx;
+  }, [p2SelectedIdx]);
+  useEffect(() => {
+    p2AssistIdxRef.current = p2AssistIdx;
+  }, [p2AssistIdx]);
+
+  // On-screen banner notification for tag switches
+  const [tagNotice, setTagNotice] = useState<{ text: string; color: string } | null>(null);
+
+  // Tag & Assist Cooldown states (in seconds for HUD display)
+  const [p1TagCd, setP1TagCd] = useState<number>(0);
+  const [p1AssistCd, setP1AssistCd] = useState<number>(0);
+  const [p2TagCd, setP2TagCd] = useState<number>(0);
+  const [p2AssistCd, setP2AssistCd] = useState<number>(0);
+  const p1TagCdRef = useRef<number>(0);
+  const p1AssistCdRef = useRef<number>(0);
+  const p2TagCdRef = useRef<number>(0);
+  const p2AssistCdRef = useRef<number>(0);
 
   // Stage selection
   const [selectedStageIdx, setSelectedStageIdx] = useState<number>(0);
@@ -2001,7 +2346,7 @@ export default function App() {
   const [musicTrackIdx, setMusicTrackIdx] = useState<number>(0);
   const [musicVolume, setMusicVolume] = useState<number>(0.65);
   const [customMusicUrl, setCustomMusicUrl] = useState<string>('');
-  const [musicStatusText, setMusicStatusText] = useState<string>('מתנגן');
+  const [musicStatusText, setMusicStatusText] = useState<string>('Playing');
 
   const bgmAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -2051,6 +2396,9 @@ export default function App() {
   const particlesRef = useRef<SparkParticle[]>([]);
   const shockwavesRef = useRef<ShockwaveRing[]>([]);
   const ultFieldEffectsRef = useRef<UltimateFieldEffect[]>([]);
+  const stagePropsRef = useRef<StageProp[]>([]);
+  const bloodDecalsRef = useRef<BloodDecal[]>([]);
+  const activeAssistsRef = useRef<ActiveAssistFighter[]>([]);
   const screenShakeRef = useRef<number>(0);
   const hitStopFramesRef = useRef<number>(0); // Hit Stop (Game feel freeze)
   const isGameOverRef = useRef<boolean>(false);
@@ -2131,22 +2479,22 @@ export default function App() {
     const targetUrl = customMusicUrl.trim() || currentTrackDef.srcUrls[0];
 
     audioEl.src = targetUrl;
-    setMusicStatusText('טוען שיר...');
+    setMusicStatusText('Loading track...');
 
     audioEl
       .play()
       .then(() => {
-        setMusicStatusText('מתנגן');
+        setMusicStatusText('Playing');
       })
       .catch((_err) => {
         if (currentTrackDef.srcUrls[1] && !customMusicUrl) {
           audioEl.src = currentTrackDef.srcUrls[1];
           audioEl
             .play()
-            .then(() => setMusicStatusText('מתנגן'))
-            .catch(() => setMusicStatusText('לחץ להפעלה'));
+            .then(() => setMusicStatusText('Playing'))
+            .catch(() => setMusicStatusText('Click to Play'));
         } else {
-          setMusicStatusText('לחץ להפעלה');
+          setMusicStatusText('Click to Play');
         }
       });
   };
@@ -2175,12 +2523,15 @@ export default function App() {
     setMusicTrackIdx((prev) => (prev - 1 + ANIME_OST_TRACKS.length) % ANIME_OST_TRACKS.length);
   };
 
-  // Random Character selector
+  // Random Character selector (Guarantees two distinct fighters for point & assist)
   const selectRandomP1 = () => {
     audio.playDiceRoll();
     let rollCount = 0;
     const interval = setInterval(() => {
-      setP1SelectedIdx(Math.floor(Math.random() * CHARACTERS.length));
+      const pt = Math.floor(Math.random() * CHARACTERS.length);
+      const asst = (pt + 1 + Math.floor(Math.random() * (CHARACTERS.length - 1))) % CHARACTERS.length;
+      setP1SelectedIdx(pt);
+      setP1AssistIdx(asst);
       rollCount++;
       if (rollCount >= 7) {
         clearInterval(interval);
@@ -2195,7 +2546,10 @@ export default function App() {
     audio.playDiceRoll();
     let rollCount = 0;
     const interval = setInterval(() => {
-      setP2SelectedIdx(Math.floor(Math.random() * CHARACTERS.length));
+      const pt = Math.floor(Math.random() * CHARACTERS.length);
+      const asst = (pt + 1 + Math.floor(Math.random() * (CHARACTERS.length - 1))) % CHARACTERS.length;
+      setP2SelectedIdx(pt);
+      setP2AssistIdx(asst);
       rollCount++;
       if (rollCount >= 7) {
         clearInterval(interval);
@@ -2260,22 +2614,22 @@ export default function App() {
     } else if (attackKey === 'HEAVY_1') {
       // Element 1 Heavy Attack
       if (char.id === 'idan') {
-        pType = 'fireball'; // אש: כדור אש תופת
+        pType = 'fireball'; // Fire: Hellfire Orb
         pColor = '#f97316';
         pSecColor = '#ef4444';
         pSize = 30;
       } else if (char.id === 'philip') {
-        pType = 'solar_beam'; // אור: עמוד אור שמש
+        pType = 'solar_beam'; // Light: Solar Ray
         pColor = '#facc15';
         pSecColor = '#ffffff';
         pSize = 30;
       } else if (char.id === 'ivan') {
-        pType = 'wind'; // רוח: סופת הוריקן
+        pType = 'wind'; // Wind: Hurricane Vortex
         pColor = '#38bdf8';
         pSecColor = '#7dd3fc';
         pSize = 32;
       } else if (char.id === 'roni') {
-        pType = 'water'; // מים: גל צונאמי
+        pType = 'water'; // Water: Tidal Wave
         pColor = '#06b6d4';
         pSecColor = '#38bdf8';
         pSize = 32;
@@ -2283,22 +2637,22 @@ export default function App() {
     } else {
       // Element 2 Heavy Attack (HEAVY_2)
       if (char.id === 'idan') {
-        pType = 'darkness'; // אפלה: בור כבידה וגל אפל
+        pType = 'darkness'; // Darkness: Void Graviton
         pColor = '#7c3aed';
         pSecColor = '#000000';
         pSize = 34;
       } else if (char.id === 'philip') {
-        pType = 'crystal'; // אדמה: גייזר קוצי אדמה וקריסטל
+        pType = 'crystal'; // Earth: Crystal Geyser
         pColor = '#eab308';
         pSecColor = '#ca8a04';
         pSize = 32;
       } else if (char.id === 'ivan') {
-        pType = 'lightning'; // חשמל: ברק שמיים
+        pType = 'lightning'; // Lightning: Sky Thunder
         pColor = '#60a5fa';
         pSecColor = '#ffffff';
         pSize = 32;
       } else if (char.id === 'roni') {
-        pType = 'blood'; // דם: מגל דם רותח
+        pType = 'blood'; // Blood: Crimson Sickle
         pColor = '#e11d48';
         pSecColor = '#881337';
         pSize = 34;
@@ -2346,6 +2700,51 @@ export default function App() {
     setTimeout(() => setActiveUltBanner(null), 1600);
   };
 
+  // Voice quotes for Tag, Assist, and Victory announcements
+  const TAG_QUOTES: { [key: string]: string } = {
+    idan: "Tagging in! I'll incinerate them!",
+    philip: "My crystal armor will shatter you!",
+    ivan: "Lightning takes the lead!",
+    roni: "Blood and water answer my call!"
+  };
+
+  const ASSIST_QUOTES: { [key: string]: string } = {
+    idan: "Infernal burst strike!",
+    philip: "Solar prism shock!",
+    ivan: "Thunderstorm crash!",
+    roni: "Tidal blood surge!"
+  };
+
+  const VICTORY_QUOTES: { [key: string]: string } = {
+    idan: "You couldn't even survive my sparks.",
+    philip: "Absolute precision. Crystalline perfection.",
+    ivan: "Thunder always strikes first and fastest!",
+    roni: "Your strength was but a droplet in the sea."
+  };
+
+  // Helper to spawn persistent floor blood decals
+  const spawnBloodDecal = (hitX: number) => {
+    const clampedX = Math.max(30, Math.min(CANVAS_WIDTH - 30, hitX + (Math.random() - 0.5) * 30));
+    const splatters: { dx: number; dy: number; r: number }[] = [];
+    for (let s = 0; s < 5; s++) {
+      splatters.push({
+        dx: (Math.random() - 0.5) * 36,
+        dy: (Math.random() - 0.5) * 8,
+        r: Math.random() * 3.5 + 1.5
+      });
+    }
+    bloodDecalsRef.current.push({
+      x: clampedX,
+      y: GROUND_Y + 14 + Math.random() * 8,
+      width: Math.random() * 16 + 12,
+      height: Math.random() * 6 + 3,
+      color: Math.random() < 0.5 ? '#881337' : '#991b1b',
+      alpha: 0.85,
+      splatters
+    });
+    if (bloodDecalsRef.current.length > 35) bloodDecalsRef.current.shift();
+  };
+
   // Training Mode Actions
   const resetTraining = () => {
     const f1 = fighter1Ref.current;
@@ -2353,7 +2752,7 @@ export default function App() {
     if (f1) {
       f1.position = { x: 140, y: 100 };
       f1.velocity = { x: 0, y: 0 };
-      f1.health = 100;
+      f1.health = MAX_FIGHTER_HEALTH;
       f1.isDead = false;
       f1.action = 'IDLE';
       f1.attackPhase = 'NONE';
@@ -2366,7 +2765,7 @@ export default function App() {
     if (f2) {
       f2.position = { x: CANVAS_WIDTH - 225, y: 100 };
       f2.velocity = { x: 0, y: 0 };
-      f2.health = 100;
+      f2.health = MAX_FIGHTER_HEALTH;
       f2.isDead = false;
       f2.action = 'IDLE';
       f2.attackPhase = 'NONE';
@@ -2376,14 +2775,16 @@ export default function App() {
       f2.isBlocking = false;
       f2.facing = 'left';
     }
-    setP1Health(100);
-    setP1DamageLag(100);
-    setP2Health(100);
-    setP2DamageLag(100);
+    setP1Health(MAX_FIGHTER_HEALTH);
+    setP1DamageLag(MAX_FIGHTER_HEALTH);
+    setP2Health(MAX_FIGHTER_HEALTH);
+    setP2DamageLag(MAX_FIGHTER_HEALTH);
     projectilesRef.current = [];
     particlesRef.current = [];
     shockwavesRef.current = [];
     ultFieldEffectsRef.current = [];
+    activeAssistsRef.current = [];
+    stagePropsRef.current = generateStageProps(STAGES[selectedStageIdx].id, GROUND_Y);
     setP1Combo(0);
     setP2Combo(0);
     audio.playSelect();
@@ -2424,9 +2825,280 @@ export default function App() {
       const success = f1.startUltimateAttack(spawnProjectile, triggerFieldEffect, gameMode === 'TRAINING');
       setP1Ult(f1.ultimateMeter);
       if (!success && f1.ultimateMeter < 100) {
-        setUltNotice(`⚠️ מד אולטימייט עדיין לא מלא (${Math.round(f1.ultimateMeter)}% / 100%) - פגע ביריב כדי לטעון`);
+        setUltNotice(`⚠️ Ultimate meter not full (${Math.round(f1.ultimateMeter)}% / 100%) - Strike opponent to charge`);
         setTimeout(() => setUltNotice(null), 2000);
       }
+    }
+  };
+
+  // Tag Team & Assist Mechanics (100% Guaranteed instant switch & mutual sync)
+  const handleP1TagSwitch = () => {
+    const f1 = fighter1Ref.current;
+    if (!f1 || f1.isDead || f1.hitStunDuration > 10 || p1TagCdRef.current > 0) return;
+
+    const currentIdx = p1SelectedIdxRef.current;
+    const assistIdx = p1AssistIdxRef.current;
+    if (currentIdx === assistIdx) return; // Prevent self-tagging edge case
+
+    const incomingChar = CHARACTERS[assistIdx];
+    if (!incomingChar) return;
+
+    audio.playTagSwitch();
+    audio.speakCharacter(incomingChar.id, TAG_QUOTES[incomingChar.id]);
+
+    for (let i = 0; i < 5; i++) {
+      f1.ghosts.push({
+        x: f1.position.x + (i - 2) * 22,
+        y: f1.position.y,
+        facing: f1.facing,
+        character: f1.character,
+        alpha: 0.8
+      });
+    }
+
+    shockwavesRef.current.push({
+      x: f1.position.x + f1.width / 2,
+      y: f1.position.y + f1.height / 2,
+      radius: 15,
+      maxRadius: 90,
+      color: incomingChar.themeColor,
+      alpha: 1.0
+    });
+
+    for (let p = 0; p < 25; p++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 8 + 3;
+      particlesRef.current.push({
+        x: f1.position.x + f1.width / 2,
+        y: f1.position.y + f1.height / 2,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: Math.random() * 5 + 3,
+        color: incomingChar.themeColor,
+        life: 0.9,
+        decay: 0.04
+      });
+    }
+
+    // Instantly switch character and reset attack state
+    f1.setCharacter(incomingChar);
+    f1.action = 'IDLE';
+    f1.attackPhase = 'NONE';
+    f1.currentAttackKey = null;
+    f1.phaseTimer = 0;
+    f1.cancelWindowActive = false;
+    f1.comboStep = 0;
+    f1.inputBuffer = [];
+
+    // Swap indices in refs and state
+    p1SelectedIdxRef.current = assistIdx;
+    p1AssistIdxRef.current = currentIdx;
+    setP1SelectedIdx(assistIdx);
+    setP1AssistIdx(currentIdx);
+
+    const cd = gameMode === 'TRAINING' ? 0 : 300; // Instant in training (0s), 5s in matches
+    p1TagCdRef.current = cd;
+    setP1TagCd(gameMode === 'TRAINING' ? 0 : 5);
+
+    setTagNotice({
+      text: `P1 TAG: ${incomingChar.name.toUpperCase()} ENTERED!`,
+      color: incomingChar.themeColor
+    });
+    setTimeout(() => setTagNotice(null), 1800);
+  };
+
+  const handleP1CallAssist = () => {
+    const f1 = fighter1Ref.current;
+    if (!f1 || f1.isDead || p1AssistCdRef.current > 0) return;
+
+    const assistChar = CHARACTERS[p1AssistIdxRef.current];
+    if (!assistChar) return;
+
+    audio.playAssistCall();
+    audio.speakCharacter(assistChar.id, ASSIST_QUOTES[assistChar.id]);
+
+    const enterFromLeft = f1.facing === 'right';
+    const startX = enterFromLeft ? Math.max(15, f1.position.x - 120) : Math.min(CANVAS_WIDTH - 95, f1.position.x + 120);
+
+    activeAssistsRef.current.push({
+      id: Date.now() + Math.random(),
+      ownerId: 'p1',
+      character: assistChar,
+      x: startX,
+      y: GROUND_Y - 165,
+      vx: enterFromLeft ? 11 : -11,
+      facing: f1.facing,
+      phase: 'ENTER',
+      timer: 55,
+      hasHit: false,
+      elementColor: assistChar.themeColor
+    });
+
+    const cd = gameMode === 'TRAINING' ? 0 : 300;
+    p1AssistCdRef.current = cd;
+    setP1AssistCd(gameMode === 'TRAINING' ? 0 : 5);
+  };
+
+  const handleP1InteractProp = () => {
+    const f1 = fighter1Ref.current;
+    if (!f1 || f1.isDead || f1.hitStunDuration > 0) return;
+
+    const f1CenterX = f1.position.x + f1.width / 2;
+    const props = stagePropsRef.current;
+    let nearestProp: StageProp | null = null;
+    let nearestDist = 110;
+
+    for (const prop of props) {
+      if (prop.isBroken || prop.isFlying) continue;
+      const propCenterX = prop.x + prop.width / 2;
+      const dist = Math.abs(f1CenterX - propCenterX);
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearestProp = prop;
+      }
+    }
+
+    if (nearestProp) {
+      audio.playPropThrow();
+      nearestProp.isFlying = true;
+      nearestProp.thrownBy = 'p1';
+      nearestProp.vx = f1.facing === 'right' ? 19 : -19;
+      nearestProp.vy = -3;
+      screenShakeRef.current = 9;
+    }
+  };
+
+  const handleP2TagSwitch = () => {
+    const f2 = fighter2Ref.current;
+    if (!f2 || f2.isDead || f2.hitStunDuration > 10 || p2TagCdRef.current > 0) return;
+
+    const currentIdx = p2SelectedIdxRef.current;
+    const assistIdx = p2AssistIdxRef.current;
+    if (currentIdx === assistIdx) return;
+
+    const incomingChar = CHARACTERS[assistIdx];
+    if (!incomingChar) return;
+
+    audio.playTagSwitch();
+    audio.speakCharacter(incomingChar.id, TAG_QUOTES[incomingChar.id]);
+
+    for (let i = 0; i < 5; i++) {
+      f2.ghosts.push({
+        x: f2.position.x + (i - 2) * 22,
+        y: f2.position.y,
+        facing: f2.facing,
+        character: f2.character,
+        alpha: 0.8
+      });
+    }
+
+    shockwavesRef.current.push({
+      x: f2.position.x + f2.width / 2,
+      y: f2.position.y + f2.height / 2,
+      radius: 15,
+      maxRadius: 90,
+      color: incomingChar.themeColor,
+      alpha: 1.0
+    });
+
+    for (let p = 0; p < 25; p++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 8 + 3;
+      particlesRef.current.push({
+        x: f2.position.x + f2.width / 2,
+        y: f2.position.y + f2.height / 2,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: Math.random() * 5 + 3,
+        color: incomingChar.themeColor,
+        life: 0.9,
+        decay: 0.04
+      });
+    }
+
+    f2.setCharacter(incomingChar);
+    f2.action = 'IDLE';
+    f2.attackPhase = 'NONE';
+    f2.currentAttackKey = null;
+    f2.phaseTimer = 0;
+    f2.cancelWindowActive = false;
+    f2.comboStep = 0;
+    f2.inputBuffer = [];
+
+    p2SelectedIdxRef.current = assistIdx;
+    p2AssistIdxRef.current = currentIdx;
+    setP2SelectedIdx(assistIdx);
+    setP2AssistIdx(currentIdx);
+
+    const cd = gameMode === 'TRAINING' ? 0 : 300;
+    p2TagCdRef.current = cd;
+    setP2TagCd(gameMode === 'TRAINING' ? 0 : 5);
+
+    setTagNotice({
+      text: `${gameMode === 'PVP' ? 'P2' : 'CPU'} TAG: ${incomingChar.name.toUpperCase()} ENTERED!`,
+      color: incomingChar.themeColor
+    });
+    setTimeout(() => setTagNotice(null), 1800);
+  };
+
+  const handleP2CallAssist = () => {
+    const f2 = fighter2Ref.current;
+    if (!f2 || f2.isDead || p2AssistCdRef.current > 0) return;
+
+    const assistChar = CHARACTERS[p2AssistIdxRef.current];
+    if (!assistChar) return;
+
+    audio.playAssistCall();
+    audio.speakCharacter(assistChar.id, ASSIST_QUOTES[assistChar.id]);
+    audio.speakCharacter(assistChar.id, ASSIST_QUOTES[assistChar.id]);
+
+    const enterFromRight = f2.facing === 'left';
+    const startX = enterFromRight ? Math.min(CANVAS_WIDTH - 95, f2.position.x + 120) : Math.max(15, f2.position.x - 120);
+
+    activeAssistsRef.current.push({
+      id: Date.now() + Math.random(),
+      ownerId: 'p2',
+      character: assistChar,
+      x: startX,
+      y: GROUND_Y - 165,
+      vx: enterFromRight ? -11 : 11,
+      facing: f2.facing,
+      phase: 'ENTER',
+      timer: 55,
+      hasHit: false,
+      elementColor: assistChar.themeColor
+    });
+
+    p2AssistCdRef.current = 360;
+    setP2AssistCd(6);
+  };
+
+  const handleP2InteractProp = () => {
+    const f2 = fighter2Ref.current;
+    if (!f2 || f2.isDead || f2.hitStunDuration > 0) return;
+
+    const f2CenterX = f2.position.x + f2.width / 2;
+    const props = stagePropsRef.current;
+    let nearestProp: StageProp | null = null;
+    let nearestDist = 110;
+
+    for (const prop of props) {
+      if (prop.isBroken || prop.isFlying) continue;
+      const propCenterX = prop.x + prop.width / 2;
+      const dist = Math.abs(f2CenterX - propCenterX);
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearestProp = prop;
+      }
+    }
+
+    if (nearestProp) {
+      audio.playPropThrow();
+      nearestProp.isFlying = true;
+      nearestProp.thrownBy = 'p2';
+      nearestProp.vx = f2.facing === 'right' ? 19 : -19;
+      nearestProp.vy = -3;
+      screenShakeRef.current = 9;
     }
   };
 
@@ -2474,6 +3146,17 @@ export default function App() {
     particlesRef.current = [];
     shockwavesRef.current = [];
     ultFieldEffectsRef.current = [];
+    activeAssistsRef.current = [];
+    bloodDecalsRef.current = [];
+    stagePropsRef.current = generateStageProps(STAGES[selectedStageIdx].id, GROUND_Y);
+    p1TagCdRef.current = 0;
+    p1AssistCdRef.current = 0;
+    p2TagCdRef.current = 0;
+    p2AssistCdRef.current = 0;
+    setP1TagCd(0);
+    setP1AssistCd(0);
+    setP2TagCd(0);
+    setP2AssistCd(0);
     hitStopFramesRef.current = 0;
 
     if (fighter1Ref.current) {
@@ -2539,7 +3222,7 @@ export default function App() {
     fighter2Ref.current = new CanvasFighter({
       position: { x: CANVAS_WIDTH - 225, y: 100 },
       velocity: { x: 0, y: 0 },
-      name: gameMode === 'TRAINING' ? 'בובת אימון' : (gameMode === 'VS_AI' ? 'בוט AI' : 'Player 2'),
+      name: gameMode === 'TRAINING' ? 'Training Dummy' : (gameMode === 'VS_AI' ? 'CPU Bot' : 'Player 2'),
       facing: 'left',
       character: char2
     });
@@ -2564,12 +3247,20 @@ export default function App() {
 
     const dialoguePair =
       CHARACTER_DIALOGUES[char1.id]?.[char2.id] || {
-        p1Line: `התכונן למפלה שלך, ${char2.name}!`,
-        p2Line: `בוא נראה מה אתה שווה בזירה!`
+        p1Line: `Prepare yourself for defeat, ${char2.name}!`,
+        p2Line: `Let's see what you've got in the arena!`
       };
     setClashDialogue(dialoguePair);
 
     audio.speakAnnouncer(`${char1.name} VERSUS ${char2.name}!`, 0.85, 0.88);
+
+    // Both characters speak their lines aloud!
+    setTimeout(() => {
+      audio.speakCharacter(char1.id, dialoguePair.p1Line);
+    }, 950);
+    setTimeout(() => {
+      audio.speakCharacter(char2.id, dialoguePair.p2Line);
+    }, 2600);
 
     if (vsScreenTimeoutRef.current) clearTimeout(vsScreenTimeoutRef.current);
     vsScreenTimeoutRef.current = setTimeout(() => {
@@ -2655,7 +3346,7 @@ export default function App() {
     setTimeout(() => {
       if (winnerIsP1) setP1RoundsWon((r) => r + 1);
       else setP2RoundsWon((r) => r + 1);
-      setWinner(`BRUTALITY! ניצחון מוחץ ל-${winner.character.name}! (${comboCount} מכות ברצף קטלני)`);
+      setWinner(`BRUTALITY! Decisive Victory for ${winner.character.name}! (${comboCount}-Hit Flawless Combo)`);
       setScreen('GAME_OVER');
     }, 4200);
   };
@@ -2713,13 +3404,13 @@ export default function App() {
 
     let fatalityName = 'EXECUTION FATALITY';
     if (winner.character.id === 'idan') {
-      fatalityName = 'תופת האפלה והכליה (Nether Void Annihilation)';
+      fatalityName = 'Nether Void Annihilation';
     } else if (winner.character.id === 'philip') {
-      fatalityName = 'חוד השמש וקוצי קריסטל (Solar Crystal Impalement)';
+      fatalityName = 'Solar Crystal Impalement';
     } else if (winner.character.id === 'ivan') {
-      fatalityName = 'קריעת שמיים בסופת ברקים (Skyfall Thunder Rift)';
+      fatalityName = 'Skyfall Thunder Rift';
     } else if (winner.character.id === 'roni') {
-      fatalityName = 'חץ הדם וצונאמי התהום (Crimson Tide Execution)';
+      fatalityName = 'Crimson Tide Execution';
     }
 
     triggerFieldEffect(winner);
@@ -2763,7 +3454,7 @@ export default function App() {
       const winnerIsP1 = finisherWinnerId === 'p1';
       if (winnerIsP1) setP1RoundsWon((r) => r + 1);
       else setP2RoundsWon((r) => r + 1);
-      setWinner(`FATALITY! ניצחון מוחלט ל-${winner.character.name}! (${fatalityName})`);
+      setWinner(`FATALITY! Absolute Victory for ${winner.character.name}! (${fatalityName})`);
       setScreen('GAME_OVER');
     }, 4500);
   };
@@ -2807,13 +3498,22 @@ export default function App() {
     if (roundWinner === 2) setP2RoundsWon(nextP2Rounds);
 
     if (nextP1Rounds >= roundsToWin || nextP2Rounds >= roundsToWin) {
-      let winText = nextP1Rounds >= roundsToWin ? `ניצחון לשחקן 1! (${f1.character.name})` : `ניצחון לשחקן 2! (${f2.character.name})`;
-      if (reason === 'TIME OVER') winText += ' - הזמן תם';
+      const winnerFighter = nextP1Rounds >= roundsToWin ? f1 : f2;
+      let winText = `${winnerFighter.character.name} WINS THE MATCH!`;
+      if (reason === 'TIME OVER') winText += ' (TIME OVER)';
       setWinner(winText);
       setScreen('GAME_OVER');
+
+      // Winner character speaks victory quote!
+      audio.speakAnnouncer(`VICTORY! ${winnerFighter.character.name} WINS!`, 0.88, 0.9);
+      setTimeout(() => {
+        audio.speakCharacter(winnerFighter.character.id, VICTORY_QUOTES[winnerFighter.character.id]);
+      }, 1400);
     } else {
-      const roundWinBanner = roundWinner === 1 ? `ראונד לשחקן 1! (${f1.character.name})` : `ראונד לשחקן 2! (${f2.character.name})`;
+      const winningFighter = roundWinner === 1 ? f1 : f2;
+      const roundWinBanner = `ROUND ${p1RoundsWon + p2RoundsWon + 1} TO ${winningFighter.character.name}!`;
       setRoundNotification(roundWinBanner);
+      audio.speakAnnouncer(roundWinBanner, 0.9, 0.95);
 
       setTimeout(() => {
         setRoundNotification(null);
@@ -2935,14 +3635,33 @@ export default function App() {
           f1.block(true);
         }
 
-        // Q = DASH LEFT strictly, E = DASH RIGHT strictly
+        // Q = DASH LEFT strictly, E = INTERACT PROP or DASH RIGHT
         if (e.code === 'KeyQ' && f1) {
           f1.bufferInput('DASH_L');
           if (f1.attackPhase === 'NONE') f1.dash('left');
         }
         if (e.code === 'KeyE' && f1) {
-          f1.bufferInput('DASH_R');
-          if (f1.attackPhase === 'NONE') f1.dash('right');
+          // Check if near stage prop: throw it! Otherwise dash right
+          const f1CenterX = f1.position.x + f1.width / 2;
+          const hasNearbyProp = stagePropsRef.current.some(
+            (p) => !p.isBroken && !p.isFlying && Math.abs(f1CenterX - (p.x + p.width / 2)) < 110
+          );
+          if (hasNearbyProp) {
+            handleP1InteractProp();
+          } else {
+            f1.bufferInput('DASH_R');
+            if (f1.attackPhase === 'NONE') f1.dash('right');
+          }
+        }
+
+        // Tag Switch (Key T)
+        if (e.code === 'KeyT') {
+          handleP1TagSwitch();
+        }
+
+        // Call Assist Strike (Key R)
+        if (e.code === 'KeyR') {
+          handleP1CallAssist();
         }
 
         // Player 1 Attacks (2 Light, 2 Heavy, 1 Ultimate)
@@ -2970,13 +3689,13 @@ export default function App() {
           if (f1.attackPhase === 'NONE' || f1.cancelWindowActive) f1.startHeavyAttack(2, spawnProjectile);
         }
 
-        // Ultimate Attack: Y or U (also supports O and T)
-        if ((e.code === 'KeyY' || e.code === 'KeyU' || e.code === 'KeyO' || e.code === 'KeyT') && f1) {
+        // Ultimate Attack: Y or U (or O)
+        if ((e.code === 'KeyY' || e.code === 'KeyU' || e.code === 'KeyO') && f1) {
           f1.bufferInput('ULTIMATE');
           const fired = f1.startUltimateAttack(spawnProjectile, triggerFieldEffect, gameMode === 'TRAINING');
           setP1Ult(f1.ultimateMeter);
           if (!fired && f1.ultimateMeter < 100) {
-            setUltNotice(`⚠️ מד אולטימייט עדיין לא מלא (${Math.round(f1.ultimateMeter)}% / 100%) - פגע ביריב כדי לטעון`);
+            setUltNotice(`⚠️ Ultimate meter not full (${Math.round(f1.ultimateMeter)}% / 100%) - Strike opponent to charge`);
             setTimeout(() => setUltNotice(null), 2000);
           }
         }
@@ -3004,6 +3723,21 @@ export default function App() {
             if (f2.attackPhase === 'NONE') f2.dash('right');
           }
 
+          // P2 Tag Switch: Numpad8 or KeyO
+          if (e.code === 'Numpad8' || e.code === 'KeyO') {
+            handleP2TagSwitch();
+          }
+
+          // P2 Call Assist: Numpad6 or Backslash
+          if (e.code === 'Numpad6' || e.code === 'Backslash') {
+            handleP2CallAssist();
+          }
+
+          // P2 Interact Prop: Quote or Numpad3
+          if (e.code === 'Quote' || e.code === 'Numpad3') {
+            handleP2InteractProp();
+          }
+
           // P2 Light 1 (Element 1): Shift or Numpad1
           if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'Numpad1') && f2) {
             f2.bufferInput('LIGHT_1');
@@ -3011,7 +3745,7 @@ export default function App() {
           }
 
           // P2 Light 2 (Element 2): Slash or Numpad2
-          if ((e.code === 'Slash' || e.code === 'Backslash' || e.code === 'Numpad2') && f2) {
+          if ((e.code === 'Slash' || e.code === 'Numpad2') && f2) {
             f2.bufferInput('LIGHT_2');
             if (f2.attackPhase === 'NONE' || f2.cancelWindowActive) f2.startLightAttack(2);
           }
@@ -3028,8 +3762,8 @@ export default function App() {
             if (f2.attackPhase === 'NONE' || f2.cancelWindowActive) f2.startHeavyAttack(2, spawnProjectile);
           }
 
-          // P2 Ultimate: Enter, P, or Numpad0
-          if ((e.code === 'Enter' || e.code === 'KeyP' || e.code === 'Numpad0' || e.code === 'Numpad3') && f2) {
+          // P2 Ultimate: Enter or Numpad0
+          if ((e.code === 'Enter' || e.code === 'Numpad0') && f2) {
             f2.bufferInput('ULTIMATE');
             f2.startUltimateAttack(spawnProjectile, triggerFieldEffect);
             setP2Ult(f2.ultimateMeter);
@@ -3099,10 +3833,10 @@ export default function App() {
         }
       }
 
-      if (f2.health < 25) {
-        f2.health = 100;
-        setP2Health(100);
-        setP2DamageLag(100);
+      if (f2.health < 40) {
+        f2.health = MAX_FIGHTER_HEALTH;
+        setP2Health(MAX_FIGHTER_HEALTH);
+        setP2DamageLag(MAX_FIGHTER_HEALTH);
       }
       return;
     }
@@ -3214,6 +3948,291 @@ export default function App() {
       ctx.fillStyle = fogGrad;
       ctx.fillRect(0, GROUND_Y - 45, CANVAS_WIDTH, 75);
 
+      // Update Tag and Assist Cooldowns
+      if (p1TagCdRef.current > 0) {
+        p1TagCdRef.current--;
+        if (p1TagCdRef.current % 30 === 0) setP1TagCd(Math.ceil(p1TagCdRef.current / 60));
+      }
+      if (p1AssistCdRef.current > 0) {
+        p1AssistCdRef.current--;
+        if (p1AssistCdRef.current % 30 === 0) setP1AssistCd(Math.ceil(p1AssistCdRef.current / 60));
+      }
+      if (p2TagCdRef.current > 0) {
+        p2TagCdRef.current--;
+        if (p2TagCdRef.current % 30 === 0) setP2TagCd(Math.ceil(p2TagCdRef.current / 60));
+      }
+      if (p2AssistCdRef.current > 0) {
+        p2AssistCdRef.current--;
+        if (p2AssistCdRef.current % 30 === 0) setP2AssistCd(Math.ceil(p2AssistCdRef.current / 60));
+      }
+
+      // Draw Persistent Floor Blood Decals (Environment Stains)
+      for (let bi = 0; bi < bloodDecalsRef.current.length; bi++) {
+        const decal = bloodDecalsRef.current[bi];
+        ctx.save();
+        ctx.fillStyle = decal.color;
+        ctx.globalAlpha = decal.alpha;
+        ctx.beginPath();
+        ctx.ellipse(decal.x, decal.y, decal.width, decal.height, 0, 0, Math.PI * 2);
+        ctx.fill();
+        for (let si = 0; si < decal.splatters.length; si++) {
+          const sp = decal.splatters[si];
+          ctx.beginPath();
+          ctx.arc(decal.x + sp.dx, decal.y + sp.dy, sp.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      // Update & Render Stage Props (Interactive stage objects)
+      for (let pi = stagePropsRef.current.length - 1; pi >= 0; pi--) {
+        const prop = stagePropsRef.current[pi];
+
+        // Flying prop physics & collision
+        if (prop.isFlying && !prop.isBroken) {
+          prop.x += prop.vx;
+          prop.y += prop.vy;
+          prop.vy += 0.35;
+
+          const targetFighter = prop.thrownBy === 'p1' ? f2 : f1;
+          const hitTarget =
+            prop.x + prop.width >= targetFighter.position.x &&
+            prop.x <= targetFighter.position.x + targetFighter.width &&
+            prop.y + prop.height >= targetFighter.position.y &&
+            prop.y <= targetFighter.position.y + targetFighter.height;
+
+          if (hitTarget) {
+            prop.isBroken = true;
+            prop.isFlying = false;
+            audio.playPropSmash();
+            screenShakeRef.current = 24;
+
+            targetFighter.takeHit(15, 28, 12, prop.vx > 0 ? 11 : -11, -5, prop.x, (hitX, hitY) => {
+              triggerVFX(hitX, hitY, prop.glowColor, false);
+              spawnBloodDecal(hitX);
+            });
+
+            for (let d = 0; d < 35; d++) {
+              const angle = Math.random() * Math.PI * 2;
+              const speed = Math.random() * 12 + 3;
+              particlesRef.current.push({
+                x: prop.x + prop.width / 2,
+                y: prop.y + prop.height / 2,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - 4,
+                size: Math.random() * 6 + 2,
+                color: d % 2 === 0 ? prop.glowColor : prop.color,
+                life: 1.0,
+                decay: Math.random() * 0.04 + 0.02
+              });
+            }
+
+            if (prop.thrownBy === 'p1') {
+              setP2Health(f2.health);
+              setTimeout(() => setP2DamageLag(f2.health), 220);
+              if (f2.health <= 0 && !isGameOverRef.current && gameMode !== 'TRAINING') {
+                checkFinisherOrRoundEnd(f1, f2, p1Combo + 1);
+              }
+            } else {
+              setP1Health(f1.health);
+              setTimeout(() => setP1DamageLag(f1.health), 220);
+              if (f1.health <= 0 && !isGameOverRef.current && gameMode !== 'TRAINING') {
+                checkFinisherOrRoundEnd(f2, f1, p2Combo + 1);
+              }
+            }
+          } else if (prop.x < 10 || prop.x > CANVAS_WIDTH - 10 || prop.y >= GROUND_Y - 15) {
+            prop.isBroken = true;
+            prop.isFlying = false;
+            audio.playPropSmash();
+            screenShakeRef.current = 14;
+            for (let d = 0; d < 25; d++) {
+              const angle = Math.random() * Math.PI * 2;
+              const speed = Math.random() * 10 + 2;
+              particlesRef.current.push({
+                x: prop.x + prop.width / 2,
+                y: Math.min(GROUND_Y, prop.y + prop.height),
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - 3,
+                size: Math.random() * 5 + 2,
+                color: prop.glowColor,
+                life: 0.9,
+                decay: Math.random() * 0.05 + 0.02
+              });
+            }
+          }
+        }
+
+        // Knockback into props (wall-splat element)
+        if (!prop.isBroken && !prop.isFlying) {
+          const fighters: CanvasFighter[] = [f1, f2];
+          for (const ftr of fighters) {
+            if (ftr.hitStunDuration > 0 && Math.abs(ftr.velocity.x) > 5) {
+              const collides =
+                ftr.position.x + ftr.width >= prop.x &&
+                ftr.position.x <= prop.x + prop.width &&
+                ftr.position.y + ftr.height >= prop.y;
+
+              if (collides) {
+                prop.isBroken = true;
+                audio.playPropSmash();
+                screenShakeRef.current = 26;
+                hitStopFramesRef.current = 5;
+
+                ftr.takeHit(15, 30, 0, ftr.velocity.x > 0 ? -6 : 6, -4, prop.x, (hx: number, hy: number) => {
+                  triggerVFX(hx, hy, prop.glowColor, false);
+                  spawnBloodDecal(hx);
+                });
+
+                if (ftr === f1) {
+                  setP1Health(f1.health);
+                  setTimeout(() => setP1DamageLag(f1.health), 220);
+                } else {
+                  setP2Health(f2.health);
+                  setTimeout(() => setP2DamageLag(f2.health), 220);
+                }
+
+                for (let d = 0; d < 40; d++) {
+                  const angle = Math.random() * Math.PI * 2;
+                  const speed = Math.random() * 14 + 4;
+                  particlesRef.current.push({
+                    x: prop.x + prop.width / 2,
+                    y: prop.y + prop.height / 2,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 5,
+                    size: Math.random() * 6 + 2,
+                    color: d % 2 === 0 ? prop.glowColor : prop.color,
+                    life: 1.1,
+                    decay: Math.random() * 0.03 + 0.02
+                  });
+                }
+              }
+            }
+          }
+        }
+
+        // Draw Prop
+        ctx.save();
+        if (prop.isBroken) {
+          ctx.fillStyle = 'rgba(30, 41, 59, 0.7)';
+          ctx.fillRect(prop.x - 5, GROUND_Y - 12, prop.width + 10, 12);
+          ctx.fillStyle = prop.glowColor;
+          ctx.globalAlpha = 0.4;
+          ctx.fillRect(prop.x + 5, GROUND_Y - 6, prop.width * 0.5, 6);
+        } else {
+          ctx.shadowColor = prop.glowColor;
+          ctx.shadowBlur = prop.isFlying ? 28 : 14;
+
+          ctx.fillStyle = prop.color;
+          ctx.beginPath();
+          ctx.roundRect(prop.x, prop.y, prop.width, prop.height, [8, 8, 4, 4]);
+          ctx.fill();
+
+          ctx.fillStyle = prop.glowColor;
+          ctx.fillRect(prop.x + 6, prop.y + 6, prop.width - 12, 5);
+          ctx.fillRect(prop.x + 6, prop.y + prop.height / 2, prop.width - 12, 3);
+
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          const nearP1 = Math.abs(f1.position.x + f1.width / 2 - (prop.x + prop.width / 2)) < 100 && !prop.isFlying;
+          if (nearP1) {
+            ctx.fillStyle = '#facc15';
+            ctx.font = 'bold 11px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('THROW [E]', prop.x + prop.width / 2, prop.y - 10);
+          }
+        }
+        ctx.restore();
+      }
+
+      // Update & Render Active Assist Fighters
+      for (let ai = activeAssistsRef.current.length - 1; ai >= 0; ai--) {
+        const assist = activeAssistsRef.current[ai];
+        assist.timer--;
+
+        if (assist.phase === 'ENTER') {
+          assist.x += assist.vx;
+          if (assist.timer <= 38) {
+            assist.phase = 'ATTACK';
+          }
+        } else if (assist.phase === 'ATTACK') {
+          assist.x += assist.vx * 0.35;
+
+          const defender = assist.ownerId === 'p1' ? f2 : f1;
+          const collides =
+            !assist.hasHit &&
+            assist.x + 70 >= defender.position.x &&
+            assist.x - 25 <= defender.position.x + defender.width;
+
+          if (collides) {
+            assist.hasHit = true;
+            audio.playHeavyHit();
+            screenShakeRef.current = 20;
+            hitStopFramesRef.current = 6;
+
+            defender.takeHit(15, 26, 10, assist.facing === 'right' ? 10 : -10, -5, assist.x, (hx, hy, isBlocked) => {
+              triggerVFX(hx, hy, assist.elementColor, isBlocked);
+              if (!isBlocked) spawnBloodDecal(hx);
+            });
+
+            if (assist.ownerId === 'p1') {
+              setP1Combo((c) => c + 1);
+              setP2Health(f2.health);
+              setTimeout(() => setP2DamageLag(f2.health), 220);
+              if (f2.health <= 0 && !isGameOverRef.current && gameMode !== 'TRAINING') {
+                checkFinisherOrRoundEnd(f1, f2, p1Combo + 1);
+              }
+            } else {
+              setP2Combo((c) => c + 1);
+              setP1Health(f1.health);
+              setTimeout(() => setP1DamageLag(f1.health), 220);
+              if (f1.health <= 0 && !isGameOverRef.current && gameMode !== 'TRAINING') {
+                checkFinisherOrRoundEnd(f2, f1, p2Combo + 1);
+              }
+            }
+          }
+
+          if (assist.timer <= 18) {
+            assist.phase = 'EXIT';
+            assist.vx = -assist.vx * 1.5;
+          }
+        } else if (assist.phase === 'EXIT') {
+          assist.x += assist.vx;
+          assist.y -= 3;
+        }
+
+        ctx.save();
+        ctx.shadowColor = assist.elementColor;
+        ctx.shadowBlur = 24;
+
+        const aGrad = ctx.createRadialGradient(assist.x + 35, assist.y + 70, 10, assist.x + 35, assist.y + 70, 75);
+        aGrad.addColorStop(0, `${assist.elementColor}99`);
+        aGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = aGrad;
+        ctx.beginPath();
+        ctx.arc(assist.x + 35, assist.y + 70, 75, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`★ ASSIST: ${assist.character.name.toUpperCase()}!`, assist.x + 35, assist.y - 12);
+
+        ctx.fillStyle = assist.elementColor;
+        ctx.beginPath();
+        ctx.roundRect(assist.x + 10, assist.y + 15, 50, 145, 12);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.restore();
+
+        if (assist.timer <= 0) {
+          activeAssistsRef.current.splice(ai, 1);
+        }
+      }
+
       // Player Movement Updates
       if (!f1.isDead && !f1.isBlocking && !f1.isDashing && f1.attackPhase === 'NONE' && f1.hitStunDuration <= 0 && f1.blockStunDuration <= 0) {
         if (keysRef.current.a) f1.velocity.x = -f1.speed;
@@ -3304,6 +4323,7 @@ export default function App() {
             if (!isBlocked) {
               setP1Combo((c) => c + 1);
               setTrainingTotalDamage((d) => d + data.damage);
+              spawnBloodDecal(hitX);
             }
           }
         );
@@ -3334,7 +4354,10 @@ export default function App() {
           f2.position.x,
           (hitX, hitY, isBlocked) => {
             triggerVFX(hitX, hitY, f2.character.themeColor, isBlocked, f2.currentAttackKey === 'ULTIMATE');
-            if (!isBlocked) setP2Combo((c) => c + 1);
+            if (!isBlocked) {
+              setP2Combo((c) => c + 1);
+              spawnBloodDecal(hitX);
+            }
           }
         );
 
@@ -3358,7 +4381,7 @@ export default function App() {
         ctx.shadowBlur = 40;
 
         if (ufe.character.id === 'idan') {
-          // עידן: משחרר כדור חושך שמסביבו אש ומפוצץ הכל
+          // Idan: Nether Void Annihilation explosion
           // 1. Darken the arena to deep black void
           ctx.fillStyle = `rgba(10, 5, 20, ${0.45 * alpha})`;
           ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -3416,7 +4439,7 @@ export default function App() {
             ctx.fill();
           }
 
-          // Central Pitch-Black Void Core (כדור חושך)
+          // Central Pitch-Black Void Core
           ctx.fillStyle = '#050208';
           ctx.beginPath();
           ctx.arc(centerX, centerY, voidRadius, 0, Math.PI * 2);
@@ -3430,7 +4453,7 @@ export default function App() {
           ctx.lineWidth = 3;
           ctx.stroke();
         } else if (ufe.character.id === 'philip') {
-          // פיליפ: יורה קרן אור גדולה וחזקה (Hyper Solar Beam)
+          // Philip: Hyper Solar Beam
           ctx.fillStyle = `rgba(254, 240, 138, ${0.18 * alpha})`;
           ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -3471,7 +4494,7 @@ export default function App() {
             }
           }
         } else if (ufe.character.id === 'ivan') {
-          // איבן: יורד טורנדו עם ברקים
+          // Ivan: Thunder Hurricane Cyclone
           // Dark thunderstorm sky overlay
           ctx.fillStyle = `rgba(15, 23, 42, ${0.45 * alpha})`;
           ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -3520,7 +4543,7 @@ export default function App() {
             ctx.stroke();
           }
         } else {
-          // רוני: יורה חץ מים שמסביבו דם
+          // Roni: Crimson Tide Execution
           ctx.fillStyle = `rgba(6, 182, 212, ${0.18 * alpha})`;
           ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -3624,6 +4647,7 @@ export default function App() {
             (hitX, hitY, isBlocked) => {
               triggerVFX(hitX, hitY, p.color, isBlocked, p.isUltimate);
               if (!isBlocked) {
+                spawnBloodDecal(hitX);
                 if (p.ownerId === 'p1') {
                   f1.addUltimate(p.isUltimate ? 0 : 35);
                   setP1Combo((c) => c + (p.isUltimate ? 6 : 2));
@@ -3678,7 +4702,7 @@ export default function App() {
         ctx.globalAlpha = 1.0;
 
         if (p.type === 'void_nova') {
-          // עידן ULTIMATE: כדור חושך שמסביבו אש
+          // Idan ULTIMATE: Nether Void Orb
           // Outer flame rings
           const rot = Date.now() * 0.008;
           ctx.strokeStyle = '#f97316';
@@ -3702,7 +4726,7 @@ export default function App() {
           ctx.lineWidth = 3;
           ctx.stroke();
         } else if (p.type === 'solar_beam') {
-          // פיליפ ULTIMATE & HEAVY 1: קרן אור שמש
+          // Philip ULTIMATE & HEAVY 1: Solar Ray Beam
           ctx.fillStyle = '#fef08a';
           ctx.beginPath();
           ctx.ellipse(p.x, p.y, p.size * 1.8, p.size * 0.7, 0, 0, Math.PI * 2);
@@ -3717,7 +4741,7 @@ export default function App() {
           ctx.lineWidth = 4;
           ctx.stroke();
         } else if (p.type === 'tornado') {
-          // איבן ULTIMATE: טורנדו ברקים
+          // Ivan ULTIMATE: Lightning Tornado
           ctx.fillStyle = 'rgba(56, 189, 248, 0.7)';
           ctx.beginPath();
           ctx.ellipse(p.x, p.y, p.size * 0.8, p.size * 1.3, 0, 0, Math.PI * 2);
@@ -3732,7 +4756,7 @@ export default function App() {
           ctx.lineTo(p.x + 20, p.y + 35);
           ctx.stroke();
         } else if (p.type === 'blood_arrow') {
-          // רוני ULTIMATE: חץ מים שמסביבו דם
+          // Roni ULTIMATE: Crimson Tide Water Arrow
           // Water Arrow Shaft & Tip
           ctx.fillStyle = '#06b6d4';
           ctx.beginPath();
@@ -3759,7 +4783,7 @@ export default function App() {
             ctx.fill();
           }
         } else if (p.type === 'darkness') {
-          // עידן HEAVY 2: בור כבידה וגל אפל
+          // Idan HEAVY 2: Graviton Void Pulse
           ctx.fillStyle = '#1e1035';
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -3774,7 +4798,7 @@ export default function App() {
           ctx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2);
           ctx.fill();
         } else if (p.type === 'wind') {
-          // איבן HEAVY 1: סופת הוריקן וגל רוח
+          // Ivan HEAVY 1: Hurricane Wind Slash
           ctx.strokeStyle = '#38bdf8';
           ctx.lineWidth = 6;
           ctx.beginPath();
@@ -3787,7 +4811,7 @@ export default function App() {
           ctx.arc(p.x - (p.vx > 0 ? 8 : -8), p.y, p.size * 0.7, -Math.PI * 0.35, Math.PI * 0.35, false);
           ctx.stroke();
         } else if (p.type === 'blood') {
-          // רוני HEAVY 2: מגל דם רותח
+          // Roni HEAVY 2: Crimson Boiling Sickle
           const scytheRot = Date.now() * 0.012;
           ctx.save();
           ctx.translate(p.x, p.y);
@@ -3805,7 +4829,7 @@ export default function App() {
           ctx.stroke();
           ctx.restore();
         } else if (p.type === 'fireball') {
-          // עידן HEAVY 1: כדור אש תופת
+          // Idan HEAVY 1: Hellfire Orb
           ctx.fillStyle = '#f97316';
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -3821,7 +4845,7 @@ export default function App() {
           ctx.arc(p.x + (p.vx > 0 ? 5 : -5), p.y, p.size * 0.35, 0, Math.PI * 2);
           ctx.fill();
         } else if (p.type === 'crystal') {
-          // פיליפ HEAVY 2: גייזר קוצי אדמה וקריסטל
+          // Philip HEAVY 2: Earth Crystal Geyser
           ctx.fillStyle = '#eab308';
           ctx.beginPath();
           ctx.moveTo(p.x + (p.vx > 0 ? p.size : -p.size), p.y);
@@ -3834,7 +4858,7 @@ export default function App() {
           ctx.lineWidth = 3;
           ctx.stroke();
         } else if (p.type === 'water') {
-          // רוני HEAVY 1: גל צונאמי
+          // Roni HEAVY 1: Tidal Tsunami Wave
           ctx.fillStyle = '#06b6d4';
           ctx.beginPath();
           ctx.ellipse(p.x, p.y, p.size * 1.3, p.size * 0.75, 0, 0, Math.PI * 2);
@@ -3844,7 +4868,7 @@ export default function App() {
           ctx.lineWidth = 3;
           ctx.stroke();
         } else {
-          // איבן HEAVY 2: מכת ברק שמיים
+          // Ivan HEAVY 2: Thunder Bolt Strike
           ctx.fillStyle = '#38bdf8';
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size * 0.85, 0, Math.PI * 2);
@@ -3951,9 +4975,11 @@ export default function App() {
     };
   }, [screen, isPaused, selectedStageIdx, gameMode, dummyBehavior, finishHimTriggered]);
 
-  const p1Char = CHARACTERS[p1SelectedIdx];
-  const p2Char = CHARACTERS[p2SelectedIdx];
-  const stage = STAGES[selectedStageIdx];
+  const p1Char = CHARACTERS[p1SelectedIdx] || CHARACTERS[0];
+  const p1AssistChar = CHARACTERS[p1AssistIdx] || CHARACTERS[1];
+  const p2Char = CHARACTERS[p2SelectedIdx] || CHARACTERS[1];
+  const p2AssistChar = CHARACTERS[p2AssistIdx] || CHARACTERS[2];
+  const stage = STAGES[selectedStageIdx] || STAGES[0];
   const currentBgm = ANIME_OST_TRACKS[musicTrackIdx] || ANIME_OST_TRACKS[0];
 
   return (
@@ -3968,11 +4994,11 @@ export default function App() {
                 setMusicEnabled((m) => !m);
               }}
               className="p-1 rounded hover:bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer"
-              title="הפעל/השתק מוזיקה"
+              title="Toggle Music"
             >
               <Music className={`w-4 h-4 ${musicEnabled ? 'text-amber-400 animate-pulse' : 'text-slate-500'}`} />
             </button>
-            <span className="text-slate-400 font-mono hidden md:inline">שיר קרב:</span>
+            <span className="text-slate-400 font-mono hidden md:inline">OST:</span>
             <span className="font-bold text-amber-300 truncate max-w-[150px] sm:max-w-xs md:max-w-md">
               {currentBgm.title}
             </span>
@@ -3983,16 +5009,16 @@ export default function App() {
             <button
               onClick={prevTrack}
               className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
-              title="שיר קודם"
+              title="Previous Track"
             >
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronLeft className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={nextTrack}
               className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
-              title="שיר הבא"
+              title="Next Track"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -4006,11 +5032,11 @@ export default function App() {
                 ? 'bg-amber-500/20 text-amber-300 border-amber-400/50 shadow-[0_0_10px_rgba(245,158,11,0.3)]'
                 : 'bg-slate-800 text-slate-400 border-slate-700'
             }`}
-            title="הצג / הסתר בקרי מגע על המסך"
+            title="Toggle On-Screen Touch Controls"
           >
             <Gamepad2 className="w-3.5 h-3.5 text-amber-400" />
             <span className="hidden sm:inline font-bold text-[11px]">
-              {showTouchControls ? 'בקרי מגע: פעיל' : 'בקרי מגע: כבוי'}
+              {showTouchControls ? 'TOUCH: ON' : 'TOUCH: OFF'}
             </span>
           </button>
 
@@ -4020,28 +5046,25 @@ export default function App() {
               setSoundEnabled((s) => !s);
             }}
             className="p-1.5 rounded hover:bg-slate-800 text-slate-300 transition cursor-pointer flex items-center gap-1"
-            title="אפקטים קוליים"
+            title="Toggle Sound Effects"
           >
             {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-sky-400" /> : <VolumeX className="w-3.5 h-3.5 text-slate-500" />}
-            <span className="hidden md:inline font-mono text-[11px]">{soundEnabled ? 'SFX' : 'Mute'}</span>
+            <span className="hidden md:inline font-mono text-[11px]">{soundEnabled ? 'SFX ON' : 'MUTED'}</span>
           </button>
 
           <button
             onClick={toggleFullscreen}
             className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer flex items-center gap-1 border border-slate-700"
-            title="מסך מלא"
+            title="Toggle Fullscreen"
           >
             {isFullscreen ? <Minimize className="w-3.5 h-3.5 text-amber-400" /> : <Maximize className="w-3.5 h-3.5 text-amber-400" />}
-            <span className="font-bold text-[11px] hidden sm:inline">{isFullscreen ? 'צא ממסך מלא' : 'מסך מלא'}</span>
+            <span className="font-bold text-[11px] hidden sm:inline">{isFullscreen ? 'EXIT FULLSCREEN' : 'FULLSCREEN'}</span>
           </button>
         </div>
       </div>
 
-      {/* STUDIO SPLASH SCREEN (shown once on load, before the main menu) */}
-      {screen === 'SPLASH' && <SplashScreen onDone={() => setScreen('TITLE_MENU')} />}
-
       {/* ========================================================================= */}
-      {/* SCREEN 1: ARCADE MAIN MENU (CENTERED, EXPANDED & 6 BUTTONS) */}
+      {/* SCREEN 1: ARCADE MAIN MENU (CENTERED, CLEAN 5 BUTTONS - NO EXIT BUTTON) */}
       {/* ========================================================================= */}
       {screen === 'TITLE_MENU' && (
         <div className="w-full max-w-5xl aspect-[16/10] md:aspect-[16/9] bg-slate-950 rounded-3xl border-4 border-amber-500/60 shadow-[0_0_80px_rgba(245,158,11,0.25)] flex flex-col items-center justify-between p-6 md:p-8 mx-auto relative overflow-hidden my-auto">
@@ -4058,112 +5081,112 @@ export default function App() {
           <div className="flex flex-col items-center text-center z-20 my-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-widest mb-2">
               <Sparkles className="w-3.5 h-3.5" />
-              טורניר לוחמי הרחוב האולטימטיבי
+              THE ULTIMATE STREET FIGHTER CHAMPIONSHIP
             </div>
 
             <h1
-              className="text-4xl sm:text-5xl md:text-6xl font-black italic tracking-widest uppercase grad-text drop-shadow-[0_5px_15px_rgba(239,68,68,0.7)]"
+              className="text-4xl sm:text-5xl md:text-6xl font-black italic tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-red-600 drop-shadow-[0_5px_15px_rgba(239,68,68,0.7)]"
               style={{ fontFamily: "'Press Start 2P', monospace, sans-serif" }}
             >
               SQUAD NOOBS
             </h1>
             <div className="text-base sm:text-xl md:text-2xl font-black tracking-widest text-sky-400 mt-1 font-mono drop-shadow-[0_0_10px_rgba(56,189,248,0.7)]">
-              2D FIGHTING CHAMPIONSHIP
+              TAG-TEAM 2D FIGHTING CHAMPIONSHIP
             </div>
 
-            {/* Exact 6 Arcade Menu Buttons requested by user */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 w-full max-w-3xl mt-6">
-              {/* Button 1: שחקן נגד שחקן */}
+            {/* Exactly 5 Arcade Menu Buttons (Button 6 Exit removed) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 w-full max-w-3xl mt-6">
+              {/* Button 1: Player vs Player */}
               <button
                 onClick={() => {
                   audio.playCoin();
                   setGameMode('PVP');
                   setScreen('CHARACTER_SELECT');
                 }}
-                className="p-3.5 bg-gradient-to-r from-blue-900/80 to-indigo-900/80 hover:from-blue-600 hover:to-indigo-600 border-2 border-blue-400/60 rounded-xl flex items-center gap-3 text-right font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
+                className="p-3.5 bg-gradient-to-r from-blue-900/80 to-indigo-900/80 hover:from-blue-600 hover:to-indigo-600 border-2 border-blue-400/60 rounded-xl flex items-center gap-3 text-left font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400 flex items-center justify-center shrink-0 group-hover:bg-blue-500 transition">
                   <User className="w-5 h-5 text-blue-300 group-hover:text-white" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white text-xs font-black uppercase tracking-wide">1. לשחק שחקן נגד שחקן</span>
-                  <span className="text-[10px] text-blue-200/80">קרב 2 שחקנים באותה מקלדת</span>
+                  <span className="text-white text-xs font-black uppercase tracking-wide">1. PLAYER VS PLAYER</span>
+                  <span className="text-[10px] text-blue-200/80">Local 2-Player Shared Keyboard</span>
                 </div>
               </button>
 
-              {/* Button 2: שחקן נגד מחשב */}
+              {/* Button 2: Player vs CPU */}
               <button
                 onClick={() => {
                   audio.playCoin();
                   setGameMode('VS_AI');
                   setScreen('CHARACTER_SELECT');
                 }}
-                className="p-3.5 bg-gradient-to-r from-purple-900/80 to-pink-900/80 hover:from-purple-600 hover:to-pink-600 border-2 border-purple-400/60 rounded-xl flex items-center gap-3 text-right font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
+                className="p-3.5 bg-gradient-to-r from-purple-900/80 to-pink-900/80 hover:from-purple-600 hover:to-pink-600 border-2 border-purple-400/60 rounded-xl flex items-center gap-3 text-left font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-lg bg-purple-500/20 border border-purple-400 flex items-center justify-center shrink-0 group-hover:bg-purple-500 transition">
                   <Bot className="w-5 h-5 text-purple-300 group-hover:text-white" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white text-xs font-black uppercase tracking-wide">2. שחקן נגד מחשב</span>
-                  <span className="text-[10px] text-purple-200/80">קרב תחרותי נגד בוט AI</span>
+                  <span className="text-white text-xs font-black uppercase tracking-wide">2. PLAYER VS CPU</span>
+                  <span className="text-[10px] text-purple-200/80">Challenging AI Battle</span>
                 </div>
               </button>
 
-              {/* Button 3: אימונים */}
+              {/* Button 3: Training Dojo */}
               <button
                 onClick={() => {
                   audio.playCoin();
                   setGameMode('TRAINING');
                   setScreen('CHARACTER_SELECT');
                 }}
-                className="p-3.5 bg-gradient-to-r from-amber-900/80 to-yellow-900/80 hover:from-amber-600 hover:to-yellow-600 border-2 border-amber-400/60 rounded-xl flex items-center gap-3 text-right font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
+                className="p-3.5 bg-gradient-to-r from-amber-900/80 to-yellow-900/80 hover:from-amber-600 hover:to-yellow-600 border-2 border-amber-400/60 rounded-xl flex items-center gap-3 text-left font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-500 transition">
                   <Target className="w-5 h-5 text-amber-300 group-hover:text-slate-950" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white text-xs font-black uppercase tracking-wide">3. אימונים</span>
-                  <span className="text-[10px] text-amber-200/80">בובת אימון ואולטימייט חופשי</span>
+                  <span className="text-white text-xs font-black uppercase tracking-wide">3. TRAINING DOJO</span>
+                  <span className="text-[10px] text-amber-200/80">Practice Dummy & Free Meter</span>
                 </div>
               </button>
 
-              {/* Button 4: הגדרות */}
+              {/* Button 4: Game Settings */}
               <button
                 onClick={() => {
                   audio.playSelect();
                   setShowSettingsModal(true);
                 }}
-                className="p-3.5 bg-slate-900/80 hover:bg-slate-800 border-2 border-slate-700 hover:border-slate-500 rounded-xl flex items-center gap-3 text-right font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
+                className="p-3.5 bg-slate-900/80 hover:bg-slate-800 border-2 border-slate-700 hover:border-slate-500 rounded-xl flex items-center gap-3 text-left font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-700 transition">
                   <Settings className="w-5 h-5 text-slate-300 group-hover:text-white" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white text-xs font-black uppercase tracking-wide">4. הגדרות</span>
-                  <span className="text-[10px] text-slate-400">מוזיקה, ווליום, טיימר וראונדים</span>
+                  <span className="text-white text-xs font-black uppercase tracking-wide">4. SETTINGS</span>
+                  <span className="text-[10px] text-slate-400">Audio, Timer & Target Rounds</span>
                 </div>
               </button>
 
-              {/* Button 5: קרדיטים לIDL */}
+              {/* Button 5: IDL Credits */}
               <button
                 onClick={() => {
                   audio.playSelect();
                   setShowCreditsModal(true);
                 }}
-                className="p-3.5 bg-slate-900/80 hover:bg-slate-800 border-2 border-amber-500/40 hover:border-amber-400 rounded-xl flex items-center gap-3 text-right font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
+                className="p-3.5 bg-slate-900/80 hover:bg-slate-800 border-2 border-amber-500/40 hover:border-amber-400 rounded-xl flex items-center gap-3 text-left font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-500 transition">
                   <Award className="w-5 h-5 text-amber-300 group-hover:text-slate-950" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white text-xs font-black uppercase tracking-wide">5. קרדיטים ל-IDL</span>
-                  <span className="text-[10px] text-amber-200/80">יוצרים, מנוע המשחק והשראה</span>
+                  <span className="text-white text-xs font-black uppercase tracking-wide">5. IDL CREDITS</span>
+                  <span className="text-[10px] text-amber-200/80">Creators, Engine & Tribute</span>
                 </div>
               </button>
             </div>
           </div>
 
-          {/* Exact footer requested by user */}
+          {/* Arcade Footer */}
           <div className="text-xs text-amber-400/90 font-mono font-bold tracking-widest z-20 mt-4">
             2026 SQUAD NOOBS | IDL ENGINE V1.0
           </div>
@@ -4179,7 +5202,7 @@ export default function App() {
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-lg font-black uppercase text-amber-400 flex items-center gap-2">
                 <Settings className="w-5 h-5 text-amber-400" />
-                הגדרות משחק (Game Settings)
+                GAME SETTINGS
               </h3>
               <button
                 onClick={() => setShowSettingsModal(false)}
@@ -4189,11 +5212,11 @@ export default function App() {
               </button>
             </div>
 
-            {/* Match Duration (120s included!) */}
+            {/* Match Duration */}
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                 <Clock className="w-4 h-4 text-sky-400" />
-                זמן קרב ברירת מחדל:
+                Default Match Duration:
               </span>
               <div className="grid grid-cols-4 gap-2">
                 {[120, 180, 240, 300].map((sec) => (
@@ -4209,7 +5232,7 @@ export default function App() {
                         : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
                     }`}
                   >
-                    {sec} שניות
+                    {sec} Seconds
                   </button>
                 ))}
               </div>
@@ -4219,7 +5242,7 @@ export default function App() {
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                 <Trophy className="w-4 h-4 text-amber-400" />
-                כמות ראונדים לניצחון (Target Wins):
+                Target Rounds to Win:
               </span>
               <div className="grid grid-cols-5 gap-2">
                 {[1, 2, 3, 4, 5].map((r) => (
@@ -4232,7 +5255,7 @@ export default function App() {
                         : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
                     }`}
                   >
-                    {r} {r === 1 ? 'ראונד' : 'ראונדים'}
+                    {r} {r === 1 ? 'Round' : 'Rounds'}
                   </button>
                 ))}
               </div>
@@ -4242,7 +5265,7 @@ export default function App() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-bold text-slate-300 flex items-center justify-between">
-                  <span>עוצמת מוזיקה (BGM):</span>
+                  <span>Music Volume (BGM):</span>
                   <span className="text-amber-400 font-mono">{Math.round(musicVolume * 100)}%</span>
                 </span>
                 <input
@@ -4258,7 +5281,7 @@ export default function App() {
 
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-bold text-slate-300 flex items-center justify-between">
-                  <span>עוצמת אפקטים (SFX):</span>
+                  <span>Effects Volume (SFX):</span>
                   <span className="text-sky-400 font-mono">{Math.round(audio.sfxVolume * 100)}%</span>
                 </span>
                 <input
@@ -4279,9 +5302,9 @@ export default function App() {
             <div className="flex flex-col gap-1.5 pt-2 border-t border-slate-800">
               <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                 <Music className="w-4 h-4 text-purple-400" />
-                בחר שיר OST רשמי:
+                Select Official Battle OST Track:
               </span>
-              <div className="grid grid-cols-1 gap-1.5">
+              <div className="grid grid-cols-1 gap-1.5 max-h-48 overflow-y-auto">
                 {ANIME_OST_TRACKS.map((t, idx) => (
                   <button
                     key={t.id}
@@ -4289,7 +5312,7 @@ export default function App() {
                       setMusicTrackIdx(idx);
                       setCustomMusicUrl('');
                     }}
-                    className={`p-2 rounded-lg text-xs font-bold text-right flex items-center justify-between transition cursor-pointer border ${
+                    className={`p-2 rounded-lg text-xs font-bold text-left flex items-center justify-between transition cursor-pointer border ${
                       musicTrackIdx === idx && !customMusicUrl
                         ? 'bg-purple-900/60 border-purple-400 text-purple-200 shadow'
                         : 'bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-700'
@@ -4307,7 +5330,7 @@ export default function App() {
               onClick={() => setShowSettingsModal(false)}
               className="w-full py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-sm uppercase rounded-xl transition cursor-pointer mt-2"
             >
-              שמור והמשך (Save & Close)
+              SAVE & CLOSE
             </button>
           </div>
         </div>
@@ -4322,7 +5345,7 @@ export default function App() {
             <div className="flex justify-between items-center border-b border-slate-800 pb-2">
               <div className="flex items-center gap-2">
                 <Award className="w-6 h-6 text-amber-400" />
-                <h3 className="text-lg font-black uppercase text-amber-400">קרדיטים רשמיים - IDL ENGINE</h3>
+                <h3 className="text-lg font-black uppercase text-amber-400">OFFICIAL CREDITS - IDL ENGINE</h3>
               </div>
               <button
                 onClick={() => setShowCreditsModal(false)}
@@ -4344,26 +5367,26 @@ export default function App() {
               </span>
             </div>
 
-            <div className="bg-slate-950/80 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2 leading-relaxed text-right">
+            <div className="bg-slate-950/80 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2 leading-relaxed text-left">
               <p>
-                👑 <strong>הפקה, חזון ובימוי:</strong> IDL Studio & Creative Team.
+                👑 <strong>Production & Direction:</strong> IDL Studio & Creative Team.
               </p>
               <p>
-                ⚔️ <strong>לוחמי העל:</strong>
+                ⚔️ <strong>Champions:</strong>
                 <br />
-                • איבן (סערת החשמל והרוח)
+                • Ivan (Lightning & Wind Tempest)
                 <br />
-                • עידן (אגרוף התופת והאש השחורה)
+                • Idan (Infernal Black Fire & Dark Void)
                 <br />
-                • פיליפ (טיטאן הקריסטל והשמש)
+                • Philip (Solar Light & Crystal Titan)
                 <br />
-                • רוני (אדון המים והדם)
+                • Roni (Crimson Blood & Tidal Wave)
               </p>
               <p>
-                🎵 <strong>פס-קול אנימה אגדי:</strong> השראה משירי הקרב של One Piece, Demon Slayer, Attack on Titan ו-Fairy Tail.
+                🎵 <strong>Soundtrack:</strong> Inspired by high-octane battle themes from One Piece, Demon Slayer, Attack on Titan, and Fairy Tail.
               </p>
               <p>
-                🕹️ <strong>מחווה למשחקי ארקייד קלאסיים:</strong> שילוב בין הדינמיות של Tekken, האנרגיה של Street Fighter והאגרסיביות של Mortal Kombat.
+                🕹️ <strong>Arcade Legacy:</strong> Inspired by the technical frame data of Tekken, special cancels of Street Fighter, and brutal finishers of Mortal Kombat.
               </p>
             </div>
 
@@ -4371,7 +5394,7 @@ export default function App() {
               onClick={() => setShowCreditsModal(false)}
               className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase rounded-xl transition cursor-pointer"
             >
-              סגור קרדיטים
+              CLOSE CREDITS
             </button>
           </div>
         </div>
@@ -4388,16 +5411,16 @@ export default function App() {
                 className="text-2xl md:text-3xl font-black uppercase text-amber-400 tracking-wider flex items-center gap-2"
                 style={{ fontFamily: "'Press Start 2P', monospace, sans-serif", fontSize: '20px' }}
               >
-                SELECT YOUR FIGHTER
+                SELECT FIGHTER & ASSIST
               </h2>
               <p className="text-xs text-slate-400 mt-1">
-                מצב משחק:{' '}
+                GAME MODE:{' '}
                 <span className="text-amber-300 font-bold">
                   {gameMode === 'TRAINING'
-                    ? '🎯 מצב אימון (בחר לוחם ובובת אימון)'
+                    ? '🎯 TRAINING MODE (Select Fighter & Training Dummy)'
                     : gameMode === 'VS_AI'
-                    ? '🤖 שחקן נגד מחשב (Player vs CPU)'
-                    : '🥊 שחקן נגד שחקן (2 Players)'}
+                    ? '🤖 PLAYER VS CPU BOT'
+                    : '🥊 2 PLAYERS (PVP)'}
                 </span>
               </p>
             </div>
@@ -4408,7 +5431,7 @@ export default function App() {
                 className="px-3 py-1.5 bg-blue-900/60 hover:bg-blue-800 border border-blue-500/50 rounded-lg text-xs font-bold text-blue-200 cursor-pointer flex items-center gap-1.5"
               >
                 <Dices className="w-3.5 h-3.5" />
-                P1 אקראי
+                RANDOM P1
               </button>
               {gameMode === 'PVP' && (
                 <button
@@ -4416,14 +5439,14 @@ export default function App() {
                   className="px-3 py-1.5 bg-rose-900/60 hover:bg-rose-800 border border-rose-500/50 rounded-lg text-xs font-bold text-rose-200 cursor-pointer flex items-center gap-1.5"
                 >
                   <Dices className="w-3.5 h-3.5" />
-                  P2 אקראי
+                  RANDOM P2
                 </button>
               )}
               <button
                 onClick={() => setScreen('TITLE_MENU')}
                 className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-xs font-bold text-slate-300 cursor-pointer"
               >
-                חזור
+                BACK
               </button>
             </div>
           </div>
@@ -4431,20 +5454,24 @@ export default function App() {
           {/* 4 Fighters + Random Card */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {CHARACTERS.map((char, idx) => {
-              const isP1 = p1SelectedIdx === idx;
-              const isP2 = p2SelectedIdx === idx;
+              const isP1Point = p1SelectedIdx === idx;
+              const isP1Assist = p1AssistIdx === idx;
+              const isP2Point = p2SelectedIdx === idx;
+              const isP2Assist = p2AssistIdx === idx;
               const IconComp = char.icon;
 
               return (
                 <div
                   key={char.id}
-                  className={`rounded-2xl border-2 p-2.5 bg-slate-900/90 flex flex-col justify-between gap-2.5 relative transition-all duration-200 shadow-xl ${
-                    isP1 && isP2
-                      ? 'border-purple-500 ring-4 ring-purple-500/50 shadow-purple-500/30'
-                      : isP1
+                  className={`rounded-2xl border-2 p-2.5 bg-slate-900/90 flex flex-col justify-between gap-2 relative transition-all duration-200 shadow-xl ${
+                    isP1Point
                       ? 'border-blue-500 ring-4 ring-blue-500/50 shadow-blue-500/30 scale-102'
-                      : isP2
+                      : isP2Point
                       ? 'border-rose-500 ring-4 ring-rose-500/50 shadow-rose-500/30 scale-102'
+                      : isP1Assist
+                      ? 'border-cyan-400 ring-2 ring-cyan-400/40'
+                      : isP2Assist
+                      ? 'border-amber-400 ring-2 ring-amber-400/40'
                       : 'border-slate-800 hover:border-slate-700 opacity-80 hover:opacity-100'
                   }`}
                 >
@@ -4453,11 +5480,17 @@ export default function App() {
                       <IconComp className="w-3.5 h-3.5" />
                       {char.element}
                     </span>
-                    <div className="flex items-center gap-1">
-                      {isP1 && <span className="px-1.5 py-0.5 rounded bg-blue-600 text-white font-mono text-[9px] font-bold">P1</span>}
-                      {isP2 && (
+                    <div className="flex items-center gap-1 flex-wrap justify-end">
+                      {isP1Point && <span className="px-1.5 py-0.5 rounded bg-blue-600 text-white font-mono text-[9px] font-bold">P1 POINT</span>}
+                      {isP1Assist && <span className="px-1.5 py-0.5 rounded bg-cyan-600 text-white font-mono text-[9px] font-bold">P1 ASSIST</span>}
+                      {isP2Point && (
                         <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white font-mono text-[9px] font-bold">
-                          {gameMode === 'TRAINING' ? 'בובה' : gameMode === 'VS_AI' ? 'CPU' : 'P2'}
+                          {gameMode === 'TRAINING' ? 'DUMMY' : gameMode === 'VS_AI' ? 'CPU' : 'P2 POINT'}
+                        </span>
+                      )}
+                      {isP2Assist && (
+                        <span className="px-1.5 py-0.5 rounded bg-amber-600 text-white font-mono text-[9px] font-bold">
+                          {gameMode === 'TRAINING' ? 'DUMMY ASST' : gameMode === 'VS_AI' ? 'CPU ASST' : 'P2 ASST'}
                         </span>
                       )}
                     </div>
@@ -4467,10 +5500,10 @@ export default function App() {
                     <img src={char.imageSrc} alt={char.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent flex flex-col justify-end p-2 gap-1 text-[9px]">
                       <div className="flex items-center gap-1 font-bold">
-                        <span className="px-1.5 py-0.5 rounded bg-amber-500/90 text-slate-950 font-black">2 קלות + 2 כבדות</span>
-                        <span className="px-1.5 py-0.5 rounded bg-purple-600/90 text-white font-bold">אולטימייט</span>
+                        <span className="px-1.5 py-0.5 rounded bg-amber-500/90 text-slate-950 font-black">2 Light + 2 Heavy</span>
+                        <span className="px-1.5 py-0.5 rounded bg-purple-600/90 text-white font-bold">Ultimate</span>
                       </div>
-                      <span className="text-amber-300 font-bold truncate">⚡ {char.ultimate.hebrewName}</span>
+                      <span className="text-amber-300 font-bold truncate">⚡ {char.ultimate.name}</span>
                     </div>
                   </div>
 
@@ -4487,29 +5520,67 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-1 pt-1">
+                  {/* Player 1 Selection Buttons */}
+                  <div className="grid grid-cols-2 gap-1 pt-0.5">
                     <button
                       onClick={() => {
                         audio.playSelect();
                         setP1SelectedIdx(idx);
+                        if (p1AssistIdx === idx) {
+                          setP1AssistIdx((idx + 1) % CHARACTERS.length);
+                        }
                       }}
-                      disabled={p1Locked}
-                      className={`py-1 rounded text-[11px] font-bold border transition cursor-pointer ${
-                        isP1 ? 'bg-blue-600 text-white border-blue-400' : 'bg-slate-950 text-slate-300 border-slate-800'
+                      className={`py-1 rounded text-[10px] font-bold border transition cursor-pointer ${
+                        isP1Point ? 'bg-blue-600 text-white border-blue-400' : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-blue-500/50'
                       }`}
                     >
-                      P1
+                      P1 POINT
                     </button>
                     <button
                       onClick={() => {
                         audio.playSelect();
-                        setP2SelectedIdx(idx);
+                        setP1AssistIdx(idx);
+                        if (p1SelectedIdx === idx) {
+                          setP1SelectedIdx((idx + 1) % CHARACTERS.length);
+                        }
                       }}
-                      className={`py-1 rounded text-[11px] font-bold border transition cursor-pointer ${
-                        isP2 ? 'bg-rose-600 text-white border-rose-400' : 'bg-slate-950 text-slate-300 border-slate-800'
+                      className={`py-1 rounded text-[10px] font-bold border transition cursor-pointer ${
+                        isP1Assist ? 'bg-cyan-600 text-white border-cyan-400' : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-cyan-500/50'
                       }`}
                     >
-                      {gameMode === 'TRAINING' ? 'בובה' : gameMode === 'VS_AI' ? 'בוט AI' : 'P2'}
+                      P1 ASSIST
+                    </button>
+                  </div>
+
+                  {/* Player 2 / CPU Selection Buttons */}
+                  <div className="grid grid-cols-2 gap-1">
+                    <button
+                      onClick={() => {
+                        audio.playSelect();
+                        setP2SelectedIdx(idx);
+                        if (p2AssistIdx === idx) {
+                          setP2AssistIdx((idx + 1) % CHARACTERS.length);
+                        }
+                      }}
+                      className={`py-1 rounded text-[10px] font-bold border transition cursor-pointer ${
+                        isP2Point ? 'bg-rose-600 text-white border-rose-400' : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-rose-500/50'
+                      }`}
+                    >
+                      {gameMode === 'TRAINING' ? 'DUMMY' : gameMode === 'VS_AI' ? 'CPU' : 'P2 POINT'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        audio.playSelect();
+                        setP2AssistIdx(idx);
+                        if (p2SelectedIdx === idx) {
+                          setP2SelectedIdx((idx + 1) % CHARACTERS.length);
+                        }
+                      }}
+                      className={`py-1 rounded text-[10px] font-bold border transition cursor-pointer ${
+                        isP2Assist ? 'bg-amber-600 text-white border-amber-400' : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-amber-500/50'
+                      }`}
+                    >
+                      {gameMode === 'TRAINING' ? 'DUMMY ASST' : gameMode === 'VS_AI' ? 'CPU ASST' : 'P2 ASST'}
                     </button>
                   </div>
                 </div>
@@ -4518,15 +5589,15 @@ export default function App() {
 
             {/* Random Card */}
             <div className="rounded-2xl border-2 border-dashed border-amber-500/60 p-3 bg-gradient-to-b from-amber-950/20 to-slate-950 flex flex-col justify-between items-center text-center shadow-xl">
-              <div className="w-full flex justify-center mt-4">
-                <div className="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center animate-bounce shadow-[0_0_20px_rgba(251,191,36,0.5)]">
-                  <Dices className="w-10 h-10 text-amber-300" />
+              <div className="w-full flex justify-center mt-3">
+                <div className="w-16 h-16 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center animate-bounce shadow-[0_0_20px_rgba(251,191,36,0.5)]">
+                  <Dices className="w-8 h-8 text-amber-300" />
                 </div>
               </div>
 
               <div>
                 <h3 className="text-sm font-black uppercase text-amber-400 tracking-wider">RANDOM ?</h3>
-                <p className="text-[11px] text-slate-400 mt-1">בחירה אקראית של לוחם</p>
+                <p className="text-[11px] text-slate-400 mt-1">Randomized team selection</p>
               </div>
 
               <div className="w-full flex flex-col gap-1.5">
@@ -4534,26 +5605,26 @@ export default function App() {
                   onClick={selectRandomP1}
                   className="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition cursor-pointer shadow"
                 >
-                  🎲 אקראי ל-P1
+                  🎲 Random P1 Team
                 </button>
                 {gameMode === 'PVP' && (
                   <button
                     onClick={selectRandomP2}
                     className="w-full py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold transition cursor-pointer shadow"
                   >
-                    🎲 אקראי ל-P2
+                    🎲 Random P2 Team
                   </button>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Match Settings Bar (Rounds & Timer: Added 120s!) */}
+          {/* Match Settings Bar */}
           {gameMode !== 'TRAINING' ? (
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-2">
                 <Trophy className="w-4 h-4 text-amber-400" />
-                <span className="font-bold text-slate-300">כמות ראונדים לניצחון:</span>
+                <span className="font-bold text-slate-300">ROUNDS TO WIN:</span>
                 <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map((r) => (
                     <button
@@ -4568,13 +5639,13 @@ export default function App() {
                   ))}
                 </div>
                 <span className="text-[10px] text-slate-400 font-mono">
-                  (הראשון שמגיע ל-{roundsToWin} ניצחונות זוכה בקרב)
+                  (First to {roundsToWin} wins the match)
                 </span>
               </div>
 
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-sky-400" />
-                <span className="font-bold text-slate-300">זמן קרב:</span>
+                <span className="font-bold text-slate-300">MATCH DURATION:</span>
                 <div className="flex items-center gap-1">
                   {[120, 180, 240, 300].map((sec) => (
                     <button
@@ -4597,7 +5668,7 @@ export default function App() {
             <div className="bg-amber-950/30 border border-amber-500/40 rounded-xl p-3 flex items-center justify-between text-xs text-amber-300">
               <div className="flex items-center gap-2 font-bold">
                 <Sparkles className="w-4 h-4 text-amber-400" />
-                <span>מצב אימון פעיל: זמן בלתי מוגבל (∞), מד אולטימייט נטען וניתן לשימוש מיידי, וחיים מתחדשים אוטומטית.</span>
+                <span>Training Mode Active: Infinite time (∞), instant ultimate meter charging, and auto-regenerating health.</span>
               </div>
             </div>
           )}
@@ -4605,9 +5676,9 @@ export default function App() {
           {/* Action Footer */}
           <div className="flex items-center justify-between border-t border-slate-800 pt-3">
             <div className="text-xs text-slate-400">
-              שחקן 1 בחר ב-<span className="text-blue-400 font-bold">{p1Char.name}</span> |{' '}
-              {gameMode === 'TRAINING' ? 'בובת אימון: ' : gameMode === 'VS_AI' ? 'בוט AI: ' : 'שחקן 2: '}
-              <span className="text-rose-400 font-bold">{p2Char.name}</span>
+              Player 1: <span className="text-blue-400 font-bold">{p1Char.name}</span> (Point) + <span className="text-cyan-400 font-bold">{p1AssistChar.name}</span> (Assist) |{' '}
+              {gameMode === 'TRAINING' ? 'Dummy: ' : gameMode === 'VS_AI' ? 'CPU: ' : 'Player 2: '}
+              <span className="text-rose-400 font-bold">{p2Char.name}</span> (Point) + <span className="text-amber-400 font-bold">{p2AssistChar.name}</span> (Assist)
             </div>
 
             <button
@@ -4619,7 +5690,7 @@ export default function App() {
               }}
               className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-sm uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 transition cursor-pointer flex items-center gap-2"
             >
-              <span>המשך לבחירת מפה (STAGE)</span>
+              <span>PROCEED TO STAGE SELECT</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -4640,7 +5711,7 @@ export default function App() {
                 SELECT BATTLE STAGE
               </h2>
               <p className="text-xs text-slate-400 mt-1">
-                בחרו זירה מועדפת או בחרו באפשרות RANDOM
+                Choose an interactive arena with props and dynamic environmental physics, or pick Random.
               </p>
             </div>
 
@@ -4648,7 +5719,7 @@ export default function App() {
               onClick={() => setScreen('CHARACTER_SELECT')}
               className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-xs font-bold text-slate-300 cursor-pointer"
             >
-              חזור לדמויות
+              BACK TO FIGHTERS
             </button>
           </div>
 
@@ -4674,7 +5745,7 @@ export default function App() {
                   <div className="p-3 flex flex-col gap-1">
                     <h3 className="text-sm font-black text-white flex items-center gap-1.5">
                       <MapPin className="w-3.5 h-3.5 text-amber-400" />
-                      <span>{st.hebrewName}</span>
+                      <span>{st.name}</span>
                     </h3>
                     <p className="text-[11px] text-slate-400 line-clamp-2">{st.description}</p>
                   </div>
@@ -4691,20 +5762,20 @@ export default function App() {
               </div>
               <div>
                 <h3 className="text-sm font-black uppercase text-purple-300 tracking-wider">RANDOM STAGE</h3>
-                <p className="text-[11px] text-slate-400 mt-1">רולטת זירות אקראית</p>
+                <p className="text-[11px] text-slate-400 mt-1">Roll the arena roulette</p>
               </div>
               <button className="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold transition shadow">
-                🎲 בחר זירה אקראית
+                🎲 Pick Random Stage
               </button>
             </div>
           </div>
 
           <div className="flex items-center justify-between border-t border-slate-800 pt-4">
             <div className="text-sm font-bold text-slate-300">
-              זירה נבחרת: <span className="text-amber-400">{stage.hebrewName}</span>
+              Selected Arena: <span className="text-amber-400">{stage.name}</span>
               {gameMode !== 'TRAINING' && (
                 <>
-                  {' '}| יעד: <span className="text-amber-300">{roundsToWin} ראונדים</span>
+                  {' '}| Target: <span className="text-amber-300">{roundsToWin} Rounds</span>
                 </>
               )}
             </div>
@@ -4713,7 +5784,7 @@ export default function App() {
               onClick={() => triggerVSAndBattle(p1Char, p2Char)}
               className="px-10 py-3.5 bg-gradient-to-r from-red-600 via-amber-500 to-yellow-500 hover:from-red-500 hover:to-yellow-400 text-slate-950 font-black text-base uppercase tracking-widest rounded-xl shadow-[0_0_30px_rgba(239,68,68,0.7)] hover:scale-105 active:scale-95 transition cursor-pointer flex items-center gap-3 animate-pulse"
             >
-              <span>{gameMode === 'TRAINING' ? 'היכנס לאימון (START)' : 'התחל את הקרב! (FIGHT)'}</span>
+              <span>{gameMode === 'TRAINING' ? 'START TRAINING (TRAIN)' : 'ENTER BATTLE (FIGHT)'}</span>
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
@@ -4732,7 +5803,7 @@ export default function App() {
           <div className="relative z-30 flex items-center justify-between w-full">
             <span className="px-4 py-1.5 rounded-full bg-slate-900/90 border border-amber-400/80 text-amber-300 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg">
               <MapPin className="w-3.5 h-3.5 text-amber-400" />
-              <span>{stage.hebrewName}</span>
+              <span>{stage.name}</span>
             </span>
 
             {/* Prominent Skip Button */}
@@ -4740,7 +5811,7 @@ export default function App() {
               onClick={skipIntroToFight}
               className="px-6 py-2.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs md:text-sm uppercase tracking-wider rounded-xl shadow-[0_0_25px_rgba(251,191,36,0.8)] hover:scale-105 active:scale-95 transition cursor-pointer flex items-center gap-2 animate-pulse"
             >
-              <span>⏭️ דלג על סצנת כניסה (Space / Enter)</span>
+              <span>⏭️ SKIP INTRO (Space / Enter)</span>
             </button>
           </div>
 
@@ -4755,9 +5826,14 @@ export default function App() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
               <div className="relative z-10 flex flex-col gap-2">
-                <span className="text-xs md:text-sm font-bold text-sky-400 uppercase tracking-widest font-mono">
-                  PLAYER 1
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs md:text-sm font-bold text-sky-400 uppercase tracking-widest font-mono">
+                    PLAYER 1 TEAM
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-blue-600/80 text-white text-[10px] font-mono font-bold">
+                    Point: {p1Char.name} | Assist: {p1AssistChar.name}
+                  </span>
+                </div>
                 <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic drop-shadow-md">
                   {p1Char.name}
                 </h2>
@@ -4778,13 +5854,13 @@ export default function App() {
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
               <div className="flex flex-col items-center">
                 <div
-                  className="text-6xl md:text-9xl font-black italic grad-text drop-shadow-[0_0_40px_rgba(239,68,68,0.9)] animate-bounce"
+                  className="text-6xl md:text-9xl font-black italic text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-red-600 drop-shadow-[0_0_40px_rgba(239,68,68,0.9)] animate-bounce"
                   style={{ fontFamily: "'Press Start 2P', monospace, sans-serif" }}
                 >
                   VS
                 </div>
                 <span className="mt-2 text-[11px] font-mono font-black text-amber-400 uppercase tracking-widest bg-black/80 px-3 py-1 rounded-full border border-amber-400/50">
-                  {gameMode === 'TRAINING' ? 'אימון חופשי' : `ראשון ל-${roundsToWin} ניצחונות`}
+                  {gameMode === 'TRAINING' ? 'FREE TRAINING' : `FIRST TO ${roundsToWin} WINS`}
                 </span>
               </div>
             </div>
@@ -4798,9 +5874,14 @@ export default function App() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
               <div className="relative z-10 flex flex-col items-end gap-2">
-                <span className="text-xs md:text-sm font-bold text-rose-400 uppercase tracking-widest font-mono">
-                  {gameMode === 'TRAINING' ? 'TRAINING DUMMY' : gameMode === 'VS_AI' ? 'CPU BOT' : 'PLAYER 2'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded bg-rose-600/80 text-white text-[10px] font-mono font-bold">
+                    Point: {p2Char.name} | Assist: {p2AssistChar.name}
+                  </span>
+                  <span className="text-xs md:text-sm font-bold text-rose-400 uppercase tracking-widest font-mono">
+                    {gameMode === 'TRAINING' ? 'TRAINING DUMMY' : gameMode === 'VS_AI' ? 'CPU BOT' : 'PLAYER 2 TEAM'}
+                  </span>
+                </div>
                 <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic drop-shadow-md">
                   {p2Char.name}
                 </h2>
@@ -4825,27 +5906,52 @@ export default function App() {
       {/* ========================================================================= */}
       {(screen === 'BATTLE' || screen === 'GAME_OVER') && (
         <div className="w-full max-w-[1550px] flex flex-col gap-1.5 md:gap-2.5 mx-auto my-auto items-center justify-center flex-1 min-h-0 overflow-hidden">
-          {/* Main Battlefield Canvas Container - EXPANDED, CENTERED & SMOOTH */}
+          {/* Main Battlefield Canvas Container */}
           <div className="w-full aspect-[16/9] max-h-[calc(100dvh-55px)] md:max-h-[78vh] bg-slate-950 rounded-2xl md:rounded-3xl border-2 md:border-4 border-slate-800 shadow-[0_0_60px_rgba(0,0,0,0.85)] relative overflow-hidden flex items-center justify-center">
             <canvas ref={canvasRef} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} className="w-full h-full block object-contain" />
 
             {/* In-Game Heads-Up Display (HUD) */}
             <div className="absolute top-0 inset-x-0 p-3 md:p-5 flex items-start justify-between pointer-events-none z-20">
-              {/* Player 1 HUD */}
-              <div className="w-[38%] flex flex-col gap-1.5">
-                <div className="flex items-center gap-2.5">
+              {/* Player 1 HUD (Point Fighter + Assist Partner) */}
+              <div className="w-[40%] flex flex-col gap-1.5">
+                <div className="flex items-center gap-2">
+                  {/* Point Fighter Avatar */}
                   <div
                     className="w-11 h-11 md:w-13 md:h-13 rounded-2xl overflow-hidden border-2 shadow-lg flex items-center justify-center relative bg-slate-900"
                     style={{ borderColor: p1Char.themeColor }}
+                    title={`Point Fighter: ${p1Char.name}`}
                   >
                     <img src={p1Char.imageSrc} alt={p1Char.name} className="w-full h-full object-cover -scale-x-100" />
+                    <span className="absolute bottom-0 inset-x-0 bg-blue-600/90 text-white font-mono text-[8px] font-bold text-center">
+                      POINT
+                    </span>
                   </div>
+
+                  {/* Assist Partner Avatar with Cooldown Badge */}
+                  <button
+                    onClick={handleP1TagSwitch}
+                    disabled={p1TagCd > 0}
+                    className="pointer-events-auto relative w-8 h-8 md:w-9 md:h-9 rounded-xl overflow-hidden border border-cyan-400/80 shadow bg-slate-900 cursor-pointer hover:scale-105 active:scale-95 transition"
+                    title={`Assist Partner: ${p1AssistChar.name} (Click or press T to Tag Switch, R to call Assist)`}
+                  >
+                    <img src={p1AssistChar.imageSrc} alt={p1AssistChar.name} className="w-full h-full object-cover -scale-x-100" />
+                    {p1TagCd > 0 ? (
+                      <div className="absolute inset-0 bg-black/75 flex items-center justify-center text-[10px] font-mono font-bold text-amber-300">
+                        {Math.ceil(p1TagCd)}s
+                      </div>
+                    ) : (
+                      <span className="absolute bottom-0 inset-x-0 bg-cyan-600/90 text-white font-mono text-[7px] font-bold text-center">
+                        ASST
+                      </span>
+                    )}
+                  </button>
+
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                       <span className="text-sm md:text-base font-black uppercase tracking-wider drop-shadow-md text-sky-400">
                         {p1Char.name}
                       </span>
-                      {/* Round Win Counters (Synchronized with roundsToWin) */}
+                      {/* Round Win Counters */}
                       {gameMode !== 'TRAINING' && (
                         <div className="flex items-center gap-1">
                           {Array.from({ length: roundsToWin }).map((_, i) => (
@@ -4859,11 +5965,13 @@ export default function App() {
                         </div>
                       )}
                     </div>
-                    <span className="text-[10px] md:text-xs text-slate-300 font-medium">{p1Char.element}</span>
+                    <span className="text-[10px] md:text-xs text-slate-300 font-medium">
+                      {p1Char.element} • Asst: {p1AssistChar.name}
+                    </span>
                   </div>
                 </div>
 
-                {/* Health Bar */}
+                {/* Health Bar (Scaled cleanly to 200 HP, no internal percentage text) */}
                 <div className="relative w-full h-6 md:h-8 bg-slate-950/85 rounded-lg border-2 border-slate-600 overflow-hidden shadow-inner backdrop-blur-sm">
                   <div
                     className="absolute top-0 bottom-0 right-0 bg-amber-400 transition-all duration-400 ease-out rounded"
@@ -4887,29 +5995,70 @@ export default function App() {
                   />
                 </div>
 
-                {/* Interactive Clickable Ultimate Button */}
-                <div className="flex items-center gap-1.5 pointer-events-auto">
+                {/* Interactive Clickable Tag, Assist & Ultimate HUD Action Bar */}
+                <div className="flex items-center gap-1.5 pointer-events-auto flex-wrap">
+                  {/* Tag Switch Button */}
+                  <button
+                    onClick={handleP1TagSwitch}
+                    disabled={p1TagCd > 0}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 border shadow ${
+                      p1TagCd === 0
+                        ? 'bg-cyan-600 hover:bg-cyan-500 text-white border-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.4)]'
+                        : 'bg-slate-900/80 text-slate-500 border-slate-800 cursor-not-allowed'
+                    }`}
+                    title="Swap with Assist Partner (Key: T)"
+                  >
+                    <Repeat className="w-3 h-3" />
+                    <span>{p1TagCd > 0 ? `TAG (${Math.ceil(p1TagCd)}s)` : 'TAG (T)'}</span>
+                  </button>
+
+                  {/* Assist Call Button */}
+                  <button
+                    onClick={handleP1CallAssist}
+                    disabled={p1AssistCd > 0}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 border shadow ${
+                      p1AssistCd === 0
+                        ? 'bg-blue-600 hover:bg-blue-500 text-white border-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.4)]'
+                        : 'bg-slate-900/80 text-slate-500 border-slate-800 cursor-not-allowed'
+                    }`}
+                    title="Call Assist Partner for a Strike (Key: R)"
+                  >
+                    <Users className="w-3 h-3" />
+                    <span>{p1AssistCd > 0 ? `ASSIST (${Math.ceil(p1AssistCd)}s)` : 'ASSIST (R)'}</span>
+                  </button>
+
+                  {/* Interactive Prop Throw Button */}
+                  <button
+                    onClick={handleP1InteractProp}
+                    className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 border shadow bg-amber-900/60 hover:bg-amber-800 text-amber-200 border-amber-600/60"
+                    title="Interact / Throw Stage Prop (Key: E)"
+                  >
+                    <Box className="w-3 h-3 text-amber-400" />
+                    <span>PROP (E)</span>
+                  </button>
+
+                  {/* Ultimate Button */}
                   <button
                     onClick={triggerP1Ultimate}
-                    className={`flex-1 py-1 px-3 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 border shadow ${
+                    className={`flex-1 py-1 px-2.5 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 border shadow ${
                       p1Ult >= 100 || gameMode === 'TRAINING'
                         ? 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 border-white shadow-[0_0_15px_#fbbf24] animate-pulse hover:scale-102'
                         : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'
                     }`}
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <Sparkles className="w-3 h-3" />
                     <span>
-                      {p1Ult >= 100 || gameMode === 'TRAINING' ? '⚡ שחרר מכת אולטימייט! (Y / U)' : `אולטימייט: ${Math.round(p1Ult)}%`}
+                      {p1Ult >= 100 || gameMode === 'TRAINING' ? '⚡ ULTIMATE ART! (Y / U)' : `SUPER: ${Math.round(p1Ult)}%`}
                     </span>
                   </button>
 
                   {gameMode === 'TRAINING' && (
                     <button
                       onClick={maxP1Ultimate}
-                      title="מלא מד אולטימייט ל-100% מיידית"
-                      className="px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold border border-purple-400 transition cursor-pointer shadow whitespace-nowrap"
+                      title="Instantly charge Super meter to 100%"
+                      className="px-2 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[10px] font-bold border border-purple-400 transition cursor-pointer shadow whitespace-nowrap"
                     >
-                      ⚡ טען 100%
+                      ⚡ 100%
                     </button>
                   )}
                 </div>
@@ -4936,9 +6085,9 @@ export default function App() {
                 </div>
                 <span className="text-[11px] tracking-widest text-slate-300 font-bold uppercase mt-1">
                   {gameMode === 'TRAINING' ? (
-                    <span className="text-amber-400 font-bold">אימון חופשי</span>
+                    <span className="text-amber-400 font-bold">FREE TRAINING</span>
                   ) : (
-                    `ראונד ${p1RoundsWon + p2RoundsWon + 1} | ראשון ל-${roundsToWin} ניצחונות`
+                    `ROUND ${p1RoundsWon + p2RoundsWon + 1} | FIRST TO ${roundsToWin} WINS`
                   )}
                 </span>
                 <button
@@ -4946,25 +6095,48 @@ export default function App() {
                   className="pointer-events-auto mt-1.5 px-3 py-1 bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 rounded text-xs font-bold flex items-center gap-1 cursor-pointer"
                 >
                   <Pause className="w-3.5 h-3.5" />
-                  עצור (P)
+                  PAUSE (P)
                 </button>
               </div>
 
-              {/* Player 2 HUD */}
-              <div className="w-[38%] flex flex-col gap-1.5 items-end">
-                <div className="flex items-center gap-2.5 flex-row-reverse">
+              {/* Player 2 HUD (Point Fighter + Assist Partner) */}
+              <div className="w-[40%] flex flex-col gap-1.5 items-end">
+                <div className="flex items-center gap-2 flex-row-reverse">
+                  {/* Point Fighter Avatar */}
                   <div
                     className="w-11 h-11 md:w-13 md:h-13 rounded-2xl overflow-hidden border-2 shadow-lg flex items-center justify-center relative bg-slate-900"
                     style={{ borderColor: p2Char.themeColor }}
+                    title={`Point Fighter: ${p2Char.name}`}
                   >
                     <img src={p2Char.imageSrc} alt={p2Char.name} className="w-full h-full object-cover" />
+                    <span className="absolute bottom-0 inset-x-0 bg-rose-600/90 text-white font-mono text-[8px] font-bold text-center">
+                      POINT
+                    </span>
                   </div>
+
+                  {/* Assist Partner Avatar with Cooldown Badge */}
+                  <div
+                    className="relative w-8 h-8 md:w-9 md:h-9 rounded-xl overflow-hidden border border-amber-400/80 shadow bg-slate-900"
+                    title={`Assist Partner: ${p2AssistChar.name}`}
+                  >
+                    <img src={p2AssistChar.imageSrc} alt={p2AssistChar.name} className="w-full h-full object-cover" />
+                    {p2TagCd > 0 ? (
+                      <div className="absolute inset-0 bg-black/75 flex items-center justify-center text-[10px] font-mono font-bold text-amber-300">
+                        {Math.ceil(p2TagCd)}s
+                      </div>
+                    ) : (
+                      <span className="absolute bottom-0 inset-x-0 bg-amber-600/90 text-white font-mono text-[7px] font-bold text-center">
+                        ASST
+                      </span>
+                    )}
+                  </div>
+
                   <div className="flex flex-col items-end">
                     <div className="flex items-center gap-2 flex-row-reverse">
                       <span className="text-sm md:text-base font-black uppercase tracking-wider drop-shadow-md text-rose-400">
                         {p2Char.name}
                       </span>
-                      {/* Round Win Counters (Synchronized with roundsToWin) */}
+                      {/* Round Win Counters */}
                       {gameMode !== 'TRAINING' && (
                         <div className="flex items-center gap-1">
                           {Array.from({ length: roundsToWin }).map((_, i) => (
@@ -4979,12 +6151,12 @@ export default function App() {
                       )}
                     </div>
                     <span className="text-[10px] md:text-xs text-slate-300 font-medium">
-                      {gameMode === 'TRAINING' ? '🎯 בובת אימון' : gameMode === 'VS_AI' ? '🤖 בוט AI' : p2Char.element}
+                      {gameMode === 'TRAINING' ? '🎯 Training Dummy' : gameMode === 'VS_AI' ? '🤖 CPU Bot' : `${p2Char.element} • Asst: ${p2AssistChar.name}`}
                     </span>
                   </div>
                 </div>
 
-                {/* Health Bar */}
+                {/* Health Bar (Scaled cleanly to 200 HP, no internal percentage text) */}
                 <div className="relative w-full h-6 md:h-8 bg-slate-950/85 rounded-lg border-2 border-slate-600 overflow-hidden shadow-inner backdrop-blur-sm">
                   <div
                     className="absolute top-0 bottom-0 left-0 bg-amber-400 transition-all duration-400 ease-out rounded"
@@ -5008,8 +6180,14 @@ export default function App() {
                   />
                 </div>
 
-                <div className="text-[10px] md:text-xs font-mono text-slate-400">
-                  {p2Ult >= 100 ? '⚡ אולטימייט מוכן' : `אולטימייט: ${Math.round(p2Ult)}%`}
+                <div className="flex items-center gap-2 text-[10px] md:text-xs font-mono text-slate-400">
+                  <span>Tag: {p2TagCd > 0 ? `${Math.ceil(p2TagCd)}s` : 'Ready'}</span>
+                  <span>•</span>
+                  <span>Assist: {p2AssistCd > 0 ? `${Math.ceil(p2AssistCd)}s` : 'Ready'}</span>
+                  <span>•</span>
+                  <span className={p2Ult >= 100 ? 'text-amber-300 font-bold' : ''}>
+                    {p2Ult >= 100 ? '⚡ SUPER READY' : `SUPER: ${Math.round(p2Ult)}%`}
+                  </span>
                 </div>
 
                 {p2Combo > 1 && (
@@ -5025,7 +6203,7 @@ export default function App() {
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-35 animate-in zoom-in-75 fade-in duration-200">
                 <div className="bg-slate-950/90 border-y-4 border-amber-400 px-8 md:px-14 py-4 md:py-6 transform -skew-x-6 shadow-[0_0_60px_rgba(251,191,36,0.85)] text-center">
                   <h2
-                    className="text-3xl md:text-5xl font-black italic tracking-widest grad-text drop-shadow-[0_0_25px_#fbbf24]"
+                    className="text-3xl md:text-5xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-red-500 drop-shadow-[0_0_25px_#fbbf24]"
                     style={{ fontFamily: "'Press Start 2P', monospace, sans-serif" }}
                   >
                     {fightIntroBanner}
@@ -5047,7 +6225,7 @@ export default function App() {
                   <div className="mt-2 flex items-center justify-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-red-500 animate-ping" />
                     <span className="text-amber-400 font-mono text-xs md:text-sm font-bold tracking-widest">
-                      זמן לסיום פטליטי: {finishHimSecondsLeft} שניות
+                      FATALITY WINDOW: {finishHimSecondsLeft}s
                     </span>
                   </div>
                 </div>
@@ -5059,10 +6237,10 @@ export default function App() {
                     className="px-8 py-3.5 bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-rose-500 text-white font-black text-base md:text-lg uppercase tracking-widest rounded-2xl border-2 border-red-400 shadow-[0_0_40px_rgba(239,68,68,0.95)] animate-bounce cursor-pointer flex items-center gap-3 active:scale-95 transition"
                   >
                     <Skull className="w-6 h-6 text-yellow-300 animate-spin" />
-                    <span>💀 בצע FATALITY עכשיו! (לחץ F / לחץ כאן)</span>
+                    <span>💀 EXECUTE FATALITY NOW! (Press F / Click Here)</span>
                   </button>
                   <span className="text-[11px] md:text-xs text-slate-300 font-mono bg-black/80 px-4 py-1.5 rounded-full border border-red-500/50 backdrop-blur-sm">
-                    לחץ F או Y במקלדת, או הקש על הכפתור כדי להפעיל חיסול קולנועי!
+                    Press F or Y on keyboard, or click the button to trigger a cinematic fatality!
                   </span>
                 </div>
               </div>
@@ -5079,8 +6257,8 @@ export default function App() {
                   <h1
                     className={`text-5xl md:text-7xl font-black italic tracking-widest uppercase drop-shadow-[0_0_35px_#ef4444] ${
                       activeFinisherBanner.type === 'FATALITY'
-                        ? 'grad-text grad-text-red'
-                        : 'grad-text grad-text-orange'
+                        ? 'text-transparent bg-clip-text bg-gradient-to-b from-red-400 via-rose-600 to-amber-500'
+                        : 'text-transparent bg-clip-text bg-gradient-to-b from-amber-300 via-orange-500 to-red-600'
                     }`}
                     style={{ fontFamily: "'Press Start 2P', monospace, sans-serif" }}
                   >
@@ -5088,7 +6266,7 @@ export default function App() {
                   </h1>
 
                   <div className="text-xl md:text-2xl font-black text-amber-300 tracking-wider">
-                    {activeFinisherBanner.winnerName} גבר על {activeFinisherBanner.loserName}!
+                    {activeFinisherBanner.winnerName} defeated {activeFinisherBanner.loserName}!
                   </div>
 
                   <div className="px-6 py-2.5 bg-red-950/90 border border-red-500/70 rounded-xl text-xs md:text-sm text-red-200 font-mono font-bold tracking-wider animate-pulse shadow">
@@ -5109,7 +6287,7 @@ export default function App() {
                     {roundNotification}
                   </h3>
                   <span className="text-xs text-slate-300 font-mono mt-2 block animate-pulse">
-                    מתכוננים לראונד הבא...
+                    Preparing next round...
                   </span>
                 </div>
               </div>
@@ -5139,7 +6317,7 @@ export default function App() {
               </div>
             )}
 
-            {/* PAUSE MENU OVERLAY */}
+            {/* PAUSE MENU OVERLAY (Zero Exit Button) */}
             {isPaused && (
               <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center z-40 animate-in fade-in zoom-in-95 duration-150">
                 <div className="bg-slate-900 border-2 border-slate-700 p-6 rounded-2xl max-w-sm w-full flex flex-col items-center text-center shadow-2xl gap-4">
@@ -5149,14 +6327,14 @@ export default function App() {
                   >
                     GAME PAUSED
                   </h3>
-                  <p className="text-xs text-slate-400">המשחק נעצר זמנית</p>
+                  <p className="text-xs text-slate-400">Battle is temporarily suspended</p>
 
                   <div className="flex flex-col gap-2.5 w-full mt-2">
                     <button
                       onClick={() => setIsPaused(false)}
                       className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-black text-sm uppercase tracking-wider rounded-xl transition cursor-pointer shadow-lg"
                     >
-                      המשך קרב (Resume)
+                      RESUME BATTLE
                     </button>
                     <button
                       onClick={() => {
@@ -5164,7 +6342,7 @@ export default function App() {
                       }}
                       className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer"
                     >
-                      התחל קרב מחדש
+                      RESTART ROUND
                     </button>
                     <button
                       onClick={() => {
@@ -5173,16 +6351,16 @@ export default function App() {
                       }}
                       className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer"
                     >
-                      בחר דמויות מחדש
+                      CHANGE CHARACTERS
                     </button>
                     <button
                       onClick={() => {
                         setIsPaused(false);
                         setScreen('TITLE_MENU');
                       }}
-                      className="w-full py-2.5 bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-300 font-bold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer"
+                      className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer"
                     >
-                      יציאה לתפריט ראשי
+                      RETURN TO MAIN MENU
                     </button>
                   </div>
                 </div>
@@ -5198,7 +6376,7 @@ export default function App() {
                   </div>
 
                   <h2
-                    className="text-4xl md:text-5xl font-black uppercase grad-text drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]"
+                    className="text-4xl md:text-5xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-b from-amber-300 via-amber-500 to-red-600 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]"
                     style={{ fontFamily: "'Press Start 2P', monospace, sans-serif", fontSize: '28px' }}
                   >
                     VICTORY!
@@ -5214,13 +6392,13 @@ export default function App() {
                       className="px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-indigo-500/30 border border-indigo-400/50 hover:scale-105 active:scale-95 transition cursor-pointer flex items-center gap-2"
                     >
                       <RotateCcw className="w-4 h-4" />
-                      קרב חוזר (Rematch)
+                      REMATCH
                     </button>
                     <button
                       onClick={() => setScreen('STAGE_SELECT')}
                       className="px-5 py-3 rounded-xl font-black text-sm uppercase tracking-widest text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:scale-105 active:scale-95 transition cursor-pointer"
                     >
-                      החלף מפה
+                      CHANGE STAGE
                     </button>
                     <button
                       onClick={() => {
@@ -5230,7 +6408,13 @@ export default function App() {
                       }}
                       className="px-5 py-3 rounded-xl font-black text-sm uppercase tracking-widest text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:scale-105 active:scale-95 transition cursor-pointer"
                     >
-                      החלף דמויות
+                      CHANGE FIGHTERS
+                    </button>
+                    <button
+                      onClick={() => setScreen('TITLE_MENU')}
+                      className="px-5 py-3 rounded-xl font-black text-sm uppercase tracking-widest text-slate-300 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:scale-105 active:scale-95 transition cursor-pointer"
+                    >
+                      MAIN MENU
                     </button>
                   </div>
                 </div>
@@ -5238,12 +6422,12 @@ export default function App() {
             )}
 
             {/* ========================================================================= */}
-            {/* VIRTUAL ON-SCREEN TOUCH CONTROLLER (TRANSPARENT ARCADE OVERLAY FOR MOBILE) */}
+            {/* VIRTUAL ON-SCREEN TOUCH CONTROLLER WITH TAG, ASSIST & PROP INTEGRATION */}
             {/* ========================================================================= */}
             {showTouchControls && screen === 'BATTLE' && (
               <>
-                {/* Left Side: Directional D-Pad & Dash */}
-                <div className="absolute bottom-2.5 left-2.5 sm:bottom-4 sm:left-4 z-30 pointer-events-auto flex flex-col items-center gap-1 select-none touch-none">
+                {/* Left Side: Directional D-Pad, Dash & Team Tag/Assist */}
+                <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 z-30 pointer-events-auto flex flex-col items-center gap-1 select-none touch-none">
                   {/* Jump Button (Up) */}
                   <button
                     onTouchStart={(e) => {
@@ -5254,15 +6438,15 @@ export default function App() {
                       e.preventDefault();
                       handleTouchJump();
                     }}
-                    className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-slate-950/45 active:bg-sky-500/50 hover:bg-slate-900/60 border-2 border-white/20 active:border-sky-400 backdrop-blur-md flex flex-col items-center justify-center text-white active:scale-95 transition shadow-lg cursor-pointer"
-                    title="קפיצה (Jump / W)"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-950/50 active:bg-sky-500/50 hover:bg-slate-900/60 border-2 border-white/20 active:border-sky-400 backdrop-blur-md flex flex-col items-center justify-center text-white active:scale-95 transition shadow-lg cursor-pointer"
+                    title="Jump (W)"
                   >
-                    <span className="text-base sm:text-lg font-black leading-none">▲</span>
-                    <span className="text-[7.5px] font-mono text-slate-300">קפיצה</span>
+                    <span className="text-sm sm:text-base font-black leading-none">▲</span>
+                    <span className="text-[7px] font-mono text-slate-300">JUMP</span>
                   </button>
 
                   {/* Horizontal row: Left, Block, Right */}
-                  <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div className="flex items-center gap-1 sm:gap-1.5">
                     {/* Move Left */}
                     <button
                       onTouchStart={(e) => {
@@ -5285,11 +6469,11 @@ export default function App() {
                         e.preventDefault();
                         keysRef.current.a = false;
                       }}
-                      className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-slate-950/45 active:bg-sky-500/50 hover:bg-slate-900/60 border-2 border-white/20 active:border-sky-400 backdrop-blur-md flex flex-col items-center justify-center text-white active:scale-95 transition shadow-lg cursor-pointer"
-                      title="שמאלה (Left / A)"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-950/50 active:bg-sky-500/50 hover:bg-slate-900/60 border-2 border-white/20 active:border-sky-400 backdrop-blur-md flex flex-col items-center justify-center text-white active:scale-95 transition shadow-lg cursor-pointer"
+                      title="Move Left (A)"
                     >
-                      <span className="text-base sm:text-lg font-black leading-none">◄</span>
-                      <span className="text-[7.5px] font-mono text-slate-300">שמאל</span>
+                      <span className="text-sm sm:text-base font-black leading-none">◄</span>
+                      <span className="text-[7px] font-mono text-slate-300">LEFT</span>
                     </button>
 
                     {/* Block / Shield */}
@@ -5319,11 +6503,11 @@ export default function App() {
                         keysRef.current.s = false;
                         fighter1Ref.current?.block(false);
                       }}
-                      className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-indigo-950/55 active:bg-indigo-500/60 hover:bg-indigo-900/60 border-2 border-indigo-400/40 active:border-indigo-300 backdrop-blur-md flex flex-col items-center justify-center text-indigo-200 active:scale-95 transition shadow-lg cursor-pointer"
-                      title="הגנה / חסימה (Block / S)"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-indigo-950/60 active:bg-indigo-500/60 hover:bg-indigo-900/60 border-2 border-indigo-400/40 active:border-indigo-300 backdrop-blur-md flex flex-col items-center justify-center text-indigo-200 active:scale-95 transition shadow-lg cursor-pointer"
+                      title="Block / Guard (S)"
                     >
                       <Shield className="w-3.5 h-3.5 text-indigo-300" />
-                      <span className="text-[7.5px] font-mono text-indigo-200">הגנה</span>
+                      <span className="text-[7px] font-mono text-indigo-200">BLOCK</span>
                     </button>
 
                     {/* Move Right */}
@@ -5348,11 +6532,11 @@ export default function App() {
                         e.preventDefault();
                         keysRef.current.d = false;
                       }}
-                      className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-slate-950/45 active:bg-sky-500/50 hover:bg-slate-900/60 border-2 border-white/20 active:border-sky-400 backdrop-blur-md flex flex-col items-center justify-center text-white active:scale-95 transition shadow-lg cursor-pointer"
-                      title="ימינה (Right / D)"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-950/50 active:bg-sky-500/50 hover:bg-slate-900/60 border-2 border-white/20 active:border-sky-400 backdrop-blur-md flex flex-col items-center justify-center text-white active:scale-95 transition shadow-lg cursor-pointer"
+                      title="Move Right (D)"
                     >
-                      <span className="text-base sm:text-lg font-black leading-none">►</span>
-                      <span className="text-[7.5px] font-mono text-slate-300">ימין</span>
+                      <span className="text-sm sm:text-base font-black leading-none">►</span>
+                      <span className="text-[7px] font-mono text-slate-300">RIGHT</span>
                     </button>
                   </div>
 
@@ -5367,10 +6551,10 @@ export default function App() {
                         e.preventDefault();
                         handleTouchDash('left');
                       }}
-                      className="px-2 py-0.5 rounded-xl bg-cyan-950/50 active:bg-cyan-500/60 border border-cyan-400/30 backdrop-blur-md text-[8.5px] font-bold text-cyan-300 active:scale-95 transition flex items-center gap-1 shadow cursor-pointer"
-                      title="דאש שמאלה (Dash Left / Q)"
+                      className="px-2 py-0.5 rounded-lg bg-cyan-950/60 active:bg-cyan-500/60 border border-cyan-400/40 backdrop-blur-md text-[8px] font-bold text-cyan-300 active:scale-95 transition flex items-center gap-1 shadow cursor-pointer"
+                      title="Dash Left (Q)"
                     >
-                      <span>⚡ דאש Q</span>
+                      <span>⚡ DASH Q</span>
                     </button>
                     <button
                       onTouchStart={(e) => {
@@ -5381,18 +6565,71 @@ export default function App() {
                         e.preventDefault();
                         handleTouchDash('right');
                       }}
-                      className="px-2 py-0.5 rounded-xl bg-cyan-950/50 active:bg-cyan-500/60 border border-cyan-400/30 backdrop-blur-md text-[8.5px] font-bold text-cyan-300 active:scale-95 transition flex items-center gap-1 shadow cursor-pointer"
-                      title="דאש ימינה (Dash Right / E)"
+                      className="px-2 py-0.5 rounded-lg bg-cyan-950/60 active:bg-cyan-500/60 border border-cyan-400/40 backdrop-blur-md text-[8px] font-bold text-cyan-300 active:scale-95 transition flex items-center gap-1 shadow cursor-pointer"
+                      title="Dash Right (E)"
                     >
-                      <span>דאש E ⚡</span>
+                      <span>DASH E ⚡</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Right Side: Combat Actions & Ultimate */}
-                <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 z-30 pointer-events-auto flex flex-col items-end gap-1.5 select-none touch-none">
+                {/* Right Side: Combat Actions, Tag/Assist & Ultimate */}
+                <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-30 pointer-events-auto flex flex-col items-end gap-1 select-none touch-none">
+                  {/* Tag, Assist & Prop Touch Buttons Row */}
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <button
+                      onTouchStart={(e) => {
+                        e.preventDefault();
+                        handleP1TagSwitch();
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleP1TagSwitch();
+                      }}
+                      disabled={p1TagCd > 0}
+                      className={`px-2 py-1 rounded-lg border text-[8px] font-black uppercase transition active:scale-95 shadow cursor-pointer ${
+                        p1TagCd === 0
+                          ? 'bg-cyan-900/70 border-cyan-400 text-cyan-200'
+                          : 'bg-slate-900/60 border-slate-800 text-slate-500'
+                      }`}
+                    >
+                      {p1TagCd > 0 ? `TAG ${Math.ceil(p1TagCd)}s` : 'TAG (T)'}
+                    </button>
+                    <button
+                      onTouchStart={(e) => {
+                        e.preventDefault();
+                        handleP1CallAssist();
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleP1CallAssist();
+                      }}
+                      disabled={p1AssistCd > 0}
+                      className={`px-2 py-1 rounded-lg border text-[8px] font-black uppercase transition active:scale-95 shadow cursor-pointer ${
+                        p1AssistCd === 0
+                          ? 'bg-blue-900/70 border-blue-400 text-blue-200'
+                          : 'bg-slate-900/60 border-slate-800 text-slate-500'
+                      }`}
+                    >
+                      {p1AssistCd > 0 ? `ASST ${Math.ceil(p1AssistCd)}s` : 'ASSIST (R)'}
+                    </button>
+                    <button
+                      onTouchStart={(e) => {
+                        e.preventDefault();
+                        handleP1InteractProp();
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleP1InteractProp();
+                      }}
+                      className="px-2 py-1 rounded-lg border border-amber-500/50 bg-amber-950/70 text-amber-200 text-[8px] font-black uppercase transition active:scale-95 shadow cursor-pointer"
+                    >
+                      PROP (E)
+                    </button>
+                  </div>
+
                   {/* Action Matrix (Light 1, Light 2, Heavy 1, Heavy 2) */}
-                  <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                  <div className="grid grid-cols-2 gap-1 sm:gap-1.5">
                     {/* Light 1 (Punch) */}
                     <button
                       onTouchStart={(e) => {
@@ -5403,11 +6640,11 @@ export default function App() {
                         e.preventDefault();
                         triggerP1Light(1);
                       }}
-                      className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-sky-950/55 active:bg-sky-500/60 hover:bg-sky-900/60 border-2 border-sky-400/40 active:border-sky-300 backdrop-blur-md flex flex-col items-center justify-center text-sky-200 active:scale-95 transition shadow-lg cursor-pointer"
-                      title="מכה קלה 1 (Punch / Light 1)"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-sky-950/60 active:bg-sky-500/60 hover:bg-sky-900/60 border-2 border-sky-400/40 active:border-sky-300 backdrop-blur-md flex flex-col items-center justify-center text-sky-200 active:scale-95 transition shadow-lg cursor-pointer"
+                      title="Light Attack 1 (Space / J)"
                     >
-                      <span className="text-[10px] sm:text-[11px] font-black leading-none">👊 קלה 1</span>
-                      <span className="text-[7.5px] font-mono text-sky-300 truncate max-w-[40px]">{p1Char.element1}</span>
+                      <span className="text-[10px] sm:text-[11px] font-black leading-none">👊 LIGHT 1</span>
+                      <span className="text-[7px] font-mono text-sky-300 truncate max-w-[40px]">{p1Char.element1}</span>
                     </button>
 
                     {/* Light 2 (Kick) */}
@@ -5420,11 +6657,11 @@ export default function App() {
                         e.preventDefault();
                         triggerP1Light(2);
                       }}
-                      className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-blue-950/55 active:bg-blue-500/60 hover:bg-blue-900/60 border-2 border-blue-400/40 active:border-blue-300 backdrop-blur-md flex flex-col items-center justify-center text-blue-200 active:scale-95 transition shadow-lg cursor-pointer"
-                      title="מכה קלה 2 (Kick / Light 2)"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-950/60 active:bg-blue-500/60 hover:bg-blue-900/60 border-2 border-blue-400/40 active:border-blue-300 backdrop-blur-md flex flex-col items-center justify-center text-blue-200 active:scale-95 transition shadow-lg cursor-pointer"
+                      title="Light Attack 2 (C / K)"
                     >
-                      <span className="text-[10px] sm:text-[11px] font-black leading-none">🦶 קלה 2</span>
-                      <span className="text-[7.5px] font-mono text-blue-300 truncate max-w-[40px]">{p1Char.element2}</span>
+                      <span className="text-[10px] sm:text-[11px] font-black leading-none">🦶 LIGHT 2</span>
+                      <span className="text-[7px] font-mono text-blue-300 truncate max-w-[40px]">{p1Char.element2}</span>
                     </button>
 
                     {/* Heavy 1 */}
@@ -5437,11 +6674,11 @@ export default function App() {
                         e.preventDefault();
                         triggerP1Heavy(1);
                       }}
-                      className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-amber-950/55 active:bg-amber-500/60 hover:bg-amber-900/60 border-2 border-amber-400/40 active:border-amber-300 backdrop-blur-md flex flex-col items-center justify-center text-amber-200 active:scale-95 transition shadow-lg cursor-pointer"
-                      title="מכה כבדה 1 (Heavy 1)"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-950/60 active:bg-amber-500/60 hover:bg-amber-900/60 border-2 border-amber-400/40 active:border-amber-300 backdrop-blur-md flex flex-col items-center justify-center text-amber-200 active:scale-95 transition shadow-lg cursor-pointer"
+                      title="Heavy Attack 1 (F / H)"
                     >
-                      <span className="text-[10px] sm:text-[11px] font-black leading-none">💥 כבדה 1</span>
-                      <span className="text-[7.5px] font-mono text-amber-300 truncate max-w-[40px]">{p1Char.element1}</span>
+                      <span className="text-[10px] sm:text-[11px] font-black leading-none">💥 HEAVY 1</span>
+                      <span className="text-[7px] font-mono text-amber-300 truncate max-w-[40px]">{p1Char.element1}</span>
                     </button>
 
                     {/* Heavy 2 */}
@@ -5454,11 +6691,11 @@ export default function App() {
                         e.preventDefault();
                         triggerP1Heavy(2);
                       }}
-                      className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-rose-950/55 active:bg-rose-500/60 hover:bg-rose-900/60 border-2 border-rose-400/40 active:border-rose-300 backdrop-blur-md flex flex-col items-center justify-center text-rose-200 active:scale-95 transition shadow-lg cursor-pointer"
-                      title="מכה כבדה 2 (Heavy 2)"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-rose-950/60 active:bg-rose-500/60 hover:bg-rose-900/60 border-2 border-rose-400/40 active:border-rose-300 backdrop-blur-md flex flex-col items-center justify-center text-rose-200 active:scale-95 transition shadow-lg cursor-pointer"
+                      title="Heavy Attack 2 (G / I)"
                     >
-                      <span className="text-[10px] sm:text-[11px] font-black leading-none">☄️ כבדה 2</span>
-                      <span className="text-[7.5px] font-mono text-rose-300 truncate max-w-[40px]">{p1Char.element2}</span>
+                      <span className="text-[10px] sm:text-[11px] font-black leading-none">☄️ HEAVY 2</span>
+                      <span className="text-[7px] font-mono text-rose-300 truncate max-w-[40px]">{p1Char.element2}</span>
                     </button>
                   </div>
 
@@ -5472,16 +6709,16 @@ export default function App() {
                       e.preventDefault();
                       triggerP1Ultimate();
                     }}
-                    className={`w-full py-1 sm:py-1.5 px-2.5 rounded-2xl backdrop-blur-md flex items-center justify-center gap-1 active:scale-95 transition shadow-xl border-2 cursor-pointer ${
+                    className={`w-full py-1 sm:py-1.5 px-2.5 rounded-xl backdrop-blur-md flex items-center justify-center gap-1 active:scale-95 transition shadow-xl border-2 cursor-pointer ${
                       p1Ult >= 100 || gameMode === 'TRAINING'
                         ? 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 border-white shadow-[0_0_20px_#fbbf24] animate-pulse font-black'
                         : 'bg-purple-950/60 border-purple-400/40 text-purple-200 font-bold'
                     }`}
-                    title="שחרר אולטימייט (Ultimate / Y / U)"
+                    title="Super Ultimate Attack (Y / U)"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider">
-                      {p1Ult >= 100 || gameMode === 'TRAINING' ? '⚡ אולטימייט מוכן!' : `אולטימייט (${Math.round(p1Ult)}%)`}
+                      {p1Ult >= 100 || gameMode === 'TRAINING' ? '⚡ ULTIMATE READY!' : `SUPER (${Math.round(p1Ult)}%)`}
                     </span>
                   </button>
                 </div>
@@ -5495,7 +6732,7 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <span className="font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                   <Target className="w-4 h-4 text-amber-400" />
-                  הגדרות בובת אימון (Dummy):
+                  DUMMY BEHAVIOR:
                 </span>
                 <div className="flex items-center gap-1">
                   {(['STAND', 'BLOCK', 'JUMP', 'ATTACK'] as const).map((mode) => (
@@ -5508,10 +6745,10 @@ export default function App() {
                           : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
                       }`}
                     >
-                      {mode === 'STAND' && 'עומד במקום'}
-                      {mode === 'BLOCK' && 'חוסם (Block)'}
-                      {mode === 'JUMP' && 'קופץ (Jump)'}
-                      {mode === 'ATTACK' && 'מתקיף קל (Attack)'}
+                      {mode === 'STAND' && 'Standing'}
+                      {mode === 'BLOCK' && 'Blocking'}
+                      {mode === 'JUMP' && 'Jumping'}
+                      {mode === 'ATTACK' && 'Attacking'}
                     </button>
                   ))}
                 </div>
@@ -5519,118 +6756,118 @@ export default function App() {
 
               <div className="flex items-center gap-2">
                 <span className="font-mono text-slate-300 bg-slate-900 px-2.5 py-1 rounded border border-slate-800">
-                  נזק שנצבר: <strong className="text-amber-400">{trainingTotalDamage}</strong>
+                  TOTAL DAMAGE: <strong className="text-amber-400">{trainingTotalDamage}</strong>
                 </span>
 
                 <button
                   onClick={resetTraining}
                   className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold flex items-center gap-1 cursor-pointer transition shadow"
-                  title="אפס מיקומי שחקנים"
+                  title="Reset fighter positions"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
-                  איפוס עמדות
+                  RESET
                 </button>
 
                 <button
                   onClick={maxP1Ultimate}
                   className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold flex items-center gap-1 cursor-pointer transition shadow"
-                  title="טען אולטימייט ל-100%"
+                  title="Charge Ultimate to 100%"
                 >
                   <Zap className="w-3.5 h-3.5" />
-                  טען אולטימייט
+                  CHARGE SUPER
                 </button>
 
                 <button
                   onClick={triggerP1Ultimate}
                   className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg font-black flex items-center gap-1 cursor-pointer transition shadow"
-                  title="הפעל אולטימייט כעת"
+                  title="Fire Ultimate now"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  הפעל אולטימייט
+                  FIRE SUPER
                 </button>
               </div>
             </div>
           )}
 
-          {/* Complete 5-Move Combat Arsenal & Keyboard Controls Dock (Responsive - hidden on small mobile to ensure 100% no-scroll experience) */}
+          {/* Complete Combat Arsenal & Keyboard Controls Dock */}
           <div className="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-2.5 sm:p-3.5 flex-col gap-2 sm:gap-3 text-xs shadow-md hidden md:flex shrink-0">
             {/* Player 1 Moveset Deck */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
                 <span className="font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
-                  ארסנל מתקפות שחקן 1 - {p1Char.name} ({p1Char.element}):
+                  P1 COMBAT ARSENAL - {p1Char.name} ({p1Char.element}) & ASSIST {p1AssistChar.name}:
                 </span>
                 <span className="text-[11px] text-slate-400">
-                  תנועה: <kbd className="px-1.5 py-0.5 bg-slate-800 rounded font-bold text-slate-200">A / D</kbd> | קפיצה: <kbd className="px-1.5 py-0.5 bg-slate-800 rounded font-bold text-slate-200">W</kbd> | הגנה: <kbd className="px-1.5 py-0.5 bg-indigo-950 border border-indigo-500/40 rounded font-bold text-indigo-300">S</kbd> | דאש: <kbd className="px-1.5 py-0.5 bg-cyan-950 border border-cyan-500/40 rounded font-bold text-cyan-300">Q / E</kbd>
+                  Move: <kbd className="px-1.5 py-0.5 bg-slate-800 rounded font-bold text-slate-200">A / D</kbd> | Jump: <kbd className="px-1.5 py-0.5 bg-slate-800 rounded font-bold text-slate-200">W</kbd> | Guard: <kbd className="px-1.5 py-0.5 bg-indigo-950 border border-indigo-500/40 rounded font-bold text-indigo-300">S</kbd> | Tag: <kbd className="px-1.5 py-0.5 bg-cyan-950 border border-cyan-500/40 rounded font-bold text-cyan-300">T</kbd> | Assist: <kbd className="px-1.5 py-0.5 bg-blue-950 border border-blue-500/40 rounded font-bold text-blue-300">R</kbd> | Prop/Dash: <kbd className="px-1.5 py-0.5 bg-amber-950 border border-amber-500/40 rounded font-bold text-amber-300">E / Q</kbd>
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                {/* Light 1 (Element 1) */}
+                {/* Light 1 */}
                 <button
                   onClick={() => triggerP1Light(1)}
-                  className="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-sky-500/40 hover:border-sky-400 rounded-xl flex flex-col items-start gap-1 text-right transition cursor-pointer group"
+                  className="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-sky-500/40 hover:border-sky-400 rounded-xl flex flex-col items-start gap-1 text-left transition cursor-pointer group"
                 >
                   <div className="flex items-center justify-between w-full">
                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 font-mono">
                       Space / J
                     </span>
-                    <span className="text-[9px] font-bold text-sky-400">קלה 1: {p1Char.element1}</span>
+                    <span className="text-[9px] font-bold text-sky-400">Light 1 • 5 DMG</span>
                   </div>
                   <span className="text-white text-[11px] font-bold group-hover:text-sky-300 transition truncate w-full">
-                    {p1Char.lightAttack1.hebrewName}
+                    {p1Char.lightAttack1.name}
                   </span>
                   <span className="text-[9px] text-slate-400 truncate w-full">{p1Char.lightAttack1.desc}</span>
                 </button>
 
-                {/* Light 2 (Element 2) */}
+                {/* Light 2 */}
                 <button
                   onClick={() => triggerP1Light(2)}
-                  className="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-blue-500/40 hover:border-blue-400 rounded-xl flex flex-col items-start gap-1 text-right transition cursor-pointer group"
+                  className="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-blue-500/40 hover:border-blue-400 rounded-xl flex flex-col items-start gap-1 text-left transition cursor-pointer group"
                 >
                   <div className="flex items-center justify-between w-full">
                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 font-mono">
                       C / K
                     </span>
-                    <span className="text-[9px] font-bold text-blue-400">קלה 2: {p1Char.element2}</span>
+                    <span className="text-[9px] font-bold text-blue-400">Light 2 • 5 DMG</span>
                   </div>
                   <span className="text-white text-[11px] font-bold group-hover:text-blue-300 transition truncate w-full">
-                    {p1Char.lightAttack2.hebrewName}
+                    {p1Char.lightAttack2.name}
                   </span>
                   <span className="text-[9px] text-slate-400 truncate w-full">{p1Char.lightAttack2.desc}</span>
                 </button>
 
-                {/* Heavy 1 (Element 1) */}
+                {/* Heavy 1 */}
                 <button
                   onClick={() => triggerP1Heavy(1)}
-                  className="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-amber-500/40 hover:border-amber-400 rounded-xl flex flex-col items-start gap-1 text-right transition cursor-pointer group"
+                  className="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-amber-500/40 hover:border-amber-400 rounded-xl flex flex-col items-start gap-1 text-left transition cursor-pointer group"
                 >
                   <div className="flex items-center justify-between w-full">
                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-mono">
                       F / H
                     </span>
-                    <span className="text-[9px] font-bold text-amber-400">כבדה 1: {p1Char.element1}</span>
+                    <span className="text-[9px] font-bold text-amber-400">Heavy 1 • 10 DMG</span>
                   </div>
                   <span className="text-white text-[11px] font-bold group-hover:text-amber-300 transition truncate w-full">
-                    {p1Char.heavyAttack1.hebrewName}
+                    {p1Char.heavyAttack1.name}
                   </span>
                   <span className="text-[9px] text-slate-400 truncate w-full">{p1Char.heavyAttack1.desc}</span>
                 </button>
 
-                {/* Heavy 2 (Element 2) */}
+                {/* Heavy 2 */}
                 <button
                   onClick={() => triggerP1Heavy(2)}
-                  className="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-rose-500/40 hover:border-rose-400 rounded-xl flex flex-col items-start gap-1 text-right transition cursor-pointer group"
+                  className="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-rose-500/40 hover:border-rose-400 rounded-xl flex flex-col items-start gap-1 text-left transition cursor-pointer group"
                 >
                   <div className="flex items-center justify-between w-full">
                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-mono">
                       G / I
                     </span>
-                    <span className="text-[9px] font-bold text-rose-400">כבדה 2: {p1Char.element2}</span>
+                    <span className="text-[9px] font-bold text-rose-400">Heavy 2 • 10 DMG</span>
                   </div>
                   <span className="text-white text-[11px] font-bold group-hover:text-rose-300 transition truncate w-full">
-                    {p1Char.heavyAttack2.hebrewName}
+                    {p1Char.heavyAttack2.name}
                   </span>
                   <span className="text-[9px] text-slate-400 truncate w-full">{p1Char.heavyAttack2.desc}</span>
                 </button>
@@ -5638,7 +6875,7 @@ export default function App() {
                 {/* Ultimate */}
                 <button
                   onClick={triggerP1Ultimate}
-                  className={`p-2 rounded-xl flex flex-col items-start gap-1 text-right transition cursor-pointer border ${
+                  className={`p-2 rounded-xl flex flex-col items-start gap-1 text-left transition cursor-pointer border ${
                     p1Ult >= 100 || gameMode === 'TRAINING'
                       ? 'bg-gradient-to-br from-amber-600/50 via-purple-900/60 to-slate-950 border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.5)] animate-pulse'
                       : 'bg-slate-950/80 border-purple-500/40 hover:border-purple-400'
@@ -5648,10 +6885,10 @@ export default function App() {
                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-mono">
                       Y / U
                     </span>
-                    <span className="text-[9px] font-bold text-purple-400">אולטימייט</span>
+                    <span className="text-[9px] font-bold text-purple-400">SUPER • 30 DMG</span>
                   </div>
                   <span className="text-amber-300 text-[11px] font-black truncate w-full">
-                    {p1Char.ultimate.hebrewName}
+                    {p1Char.ultimate.name}
                   </span>
                   <span className="text-[9px] text-slate-400 truncate w-full">{p1Char.ultimate.desc}</span>
                 </button>
@@ -5662,36 +6899,36 @@ export default function App() {
             <div className="flex flex-col gap-1.5 pt-2 border-t border-slate-800">
               <span className="font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                {gameMode === 'TRAINING' ? '🎯 בובת אימון (סרגל פעולות למעלה)' : gameMode === 'VS_AI' ? '🤖 בוט AI (נלחם עם כל 5 המהלכים):' : `שחקן 2 - ${p2Char.name} (${p2Char.element}):`}
+                {gameMode === 'TRAINING' ? '🎯 TRAINING DUMMY (Toolbar at top)' : gameMode === 'VS_AI' ? '🤖 CPU BOT (Full moveset, Assists & Ultimate AI):' : `PLAYER 2 TEAM - ${p2Char.name} & ASSIST ${p2AssistChar.name}:`}
               </span>
               {gameMode === 'PVP' ? (
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-[10px]">
                   <div className="p-1.5 bg-slate-950/60 border border-slate-800 rounded-lg">
-                    <div className="text-slate-400 font-mono font-bold">Shift / 1 (קלה 1)</div>
-                    <div className="text-rose-300 font-bold truncate">{p2Char.lightAttack1.hebrewName}</div>
+                    <div className="text-slate-400 font-mono font-bold">Shift / 1 (Light 1)</div>
+                    <div className="text-rose-300 font-bold truncate">{p2Char.lightAttack1.name}</div>
                   </div>
                   <div className="p-1.5 bg-slate-950/60 border border-slate-800 rounded-lg">
-                    <div className="text-slate-400 font-mono font-bold">/ או 2 (קלה 2)</div>
-                    <div className="text-rose-300 font-bold truncate">{p2Char.lightAttack2.hebrewName}</div>
+                    <div className="text-slate-400 font-mono font-bold">/ or 2 (Light 2)</div>
+                    <div className="text-rose-300 font-bold truncate">{p2Char.lightAttack2.name}</div>
                   </div>
                   <div className="p-1.5 bg-slate-950/60 border border-slate-800 rounded-lg">
-                    <div className="text-slate-400 font-mono font-bold">. או 4 (כבדה 1)</div>
-                    <div className="text-amber-300 font-bold truncate">{p2Char.heavyAttack1.hebrewName}</div>
+                    <div className="text-slate-400 font-mono font-bold">. or 4 (Heavy 1)</div>
+                    <div className="text-amber-300 font-bold truncate">{p2Char.heavyAttack1.name}</div>
                   </div>
                   <div className="p-1.5 bg-slate-950/60 border border-slate-800 rounded-lg">
-                    <div className="text-slate-400 font-mono font-bold">; או 5 (כבדה 2)</div>
-                    <div className="text-amber-300 font-bold truncate">{p2Char.heavyAttack2.hebrewName}</div>
+                    <div className="text-slate-400 font-mono font-bold">; or 5 (Heavy 2)</div>
+                    <div className="text-amber-300 font-bold truncate">{p2Char.heavyAttack2.name}</div>
                   </div>
                   <div className="p-1.5 bg-slate-950/60 border border-slate-800 rounded-lg">
-                    <div className="text-slate-400 font-mono font-bold">Enter / 0 (אולטימייט)</div>
-                    <div className="text-purple-300 font-bold truncate">{p2Char.ultimate.hebrewName}</div>
+                    <div className="text-slate-400 font-mono font-bold">Enter / 0 (Super)</div>
+                    <div className="text-purple-300 font-bold truncate">{p2Char.ultimate.name}</div>
                   </div>
                 </div>
               ) : (
                 <div className="text-slate-400 text-[11px] leading-relaxed">
                   {gameMode === 'TRAINING'
-                    ? 'ניתן לבחון את כל 4 המכות והאולטימייט ישירות על הבובה. השתמש במקשים או לחץ על הכרטיסיות שלמעלה להפעלה מיידית.'
-                    : 'בוט ה-AI משתמש בכל 4 המתקפות (אש/אפלה, אור/אדמה, חשמל/רוח, מים/דם) לפי מרחק הקרב ומשחרר אולטימייט הרסני כשהמד שלו מתמלא.'}
+                    ? 'Test all light and heavy strikes, assist attacks, tag switches, prop throws, and cinematic finishers directly on the dummy.'
+                    : 'The CPU AI dynamically executes light strings, projectiles, defensive blocks, assist strikes, tag switches, and unleashes super arts.'}
                 </div>
               )}
             </div>

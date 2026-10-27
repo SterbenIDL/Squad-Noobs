@@ -39,7 +39,6 @@ import {
   Minimize,
   Settings,
   Award,
-  LogOut,
   Sliders,
   Check,
   X,

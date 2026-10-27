@@ -4,6 +4,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
+import SplashScreen from './SplashScreen';
 import streetBgUrl from './assets/images/battle_arena_street_1792947360218.jpg';
 import volcanoBgUrl from './assets/images/arena_volcanic_temple_1792948162772.jpg';
 import rooftopBgUrl from './assets/images/arena_rooftop_storm_1792948193530.jpg';
@@ -39,7 +40,6 @@ import {
   Minimize,
   Settings,
   Award,
-  LogOut,
   Sliders,
   Check,
   X,
@@ -1956,12 +1956,16 @@ class CanvasFighter {
 }
 
 type GameMode = 'PVP' | 'VS_AI' | 'TRAINING';
-type GameScreen = 'TITLE_MENU' | 'CHARACTER_SELECT' | 'STAGE_SELECT' | 'VS_SCREEN' | 'BATTLE' | 'GAME_OVER';
+type GameScreen = 'SPLASH' | 'TITLE_MENU' | 'CHARACTER_SELECT' | 'STAGE_SELECT' | 'VS_SCREEN' | 'BATTLE' | 'GAME_OVER';
 
 export default function App() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const [screen, setScreen] = useState<GameScreen>('TITLE_MENU');
+  const [screen, setScreen] = useState<GameScreen>(() =>
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('nosplash')
+      ? 'TITLE_MENU'
+      : 'SPLASH'
+  );
   const [gameMode, setGameMode] = useState<GameMode>('PVP');
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -1969,7 +1973,6 @@ export default function App() {
   // Modals from Main Menu
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [showCreditsModal, setShowCreditsModal] = useState<boolean>(false);
-  const [showExitModal, setShowExitModal] = useState<boolean>(false);
 
   // Match Options (Rounds & Timer: Added 120s option)
   const [roundsToWin, setRoundsToWin] = useState<number>(2); // 1 to 5 rounds
@@ -4034,6 +4037,9 @@ export default function App() {
         </div>
       </div>
 
+      {/* STUDIO SPLASH SCREEN (shown once on load, before the main menu) */}
+      {screen === 'SPLASH' && <SplashScreen onDone={() => setScreen('TITLE_MENU')} />}
+
       {/* ========================================================================= */}
       {/* SCREEN 1: ARCADE MAIN MENU (CENTERED, EXPANDED & 6 BUTTONS) */}
       {/* ========================================================================= */}
@@ -4152,23 +4158,6 @@ export default function App() {
                 <div className="flex flex-col">
                   <span className="text-white text-xs font-black uppercase tracking-wide">5. קרדיטים ל-IDL</span>
                   <span className="text-[10px] text-amber-200/80">יוצרים, מנוע המשחק והשראה</span>
-                </div>
-              </button>
-
-              {/* Button 6: יציאה מהמשחק */}
-              <button
-                onClick={() => {
-                  audio.playSelect();
-                  setShowExitModal(true);
-                }}
-                className="p-3.5 bg-red-950/60 hover:bg-red-900 border-2 border-red-700/60 hover:border-red-500 rounded-xl flex items-center gap-3 text-right font-bold transition-all shadow-lg hover:scale-102 cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-lg bg-red-500/20 border border-red-400 flex items-center justify-center shrink-0 group-hover:bg-red-500 transition">
-                  <LogOut className="w-5 h-5 text-red-300 group-hover:text-white" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-white text-xs font-black uppercase tracking-wide">6. יציאה מהמשחק</span>
-                  <span className="text-[10px] text-red-300/80">סיום הפעלה ומסך פרידה</span>
                 </div>
               </button>
             </div>
@@ -4384,46 +4373,6 @@ export default function App() {
             >
               סגור קרדיטים
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* MODAL 6: EXIT CONFIRMATION MODAL */}
-      {/* ========================================================================= */}
-      {showExitModal && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-900 border-2 border-red-500 rounded-2xl max-w-sm w-full p-6 shadow-2xl flex flex-col items-center text-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-red-600/20 border-2 border-red-500 flex items-center justify-center shadow-[0_0_25px_rgba(239,68,68,0.5)]">
-              <LogOut className="w-8 h-8 text-red-400" />
-            </div>
-
-            <h3 className="text-xl font-black uppercase text-red-400 tracking-wider">
-              יציאה מהמשחק?
-            </h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              תודה ששיחקתם ב-<strong>SQUAD NOOBS</strong>!
-              <br />
-              האם ברצונכם לסיים את המשחק?
-            </p>
-
-            <div className="flex flex-col gap-2 w-full mt-2">
-              <button
-                onClick={() => {
-                  setShowExitModal(false);
-                  audio.playKO();
-                }}
-                className="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase rounded-xl transition cursor-pointer shadow-lg"
-              >
-                כן, יציאה (THANKS FOR PLAYING)
-              </button>
-              <button
-                onClick={() => setShowExitModal(false)}
-                className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase rounded-xl transition cursor-pointer"
-              >
-                המשך לשחק (חזור)
-              </button>
-            </div>
           </div>
         </div>
       )}

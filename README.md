@@ -1,103 +1,20 @@
-<div dir="rtl" align="right">
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-# <p align="center">🎮 SQUAD NOOBS: אליפות קרבות רחוב 2D</p>
+# Run and deploy your AI Studio app
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Engine-IDL%20Engine%20V1.0-blueviolet?style=for-the-badge&logo=unity" alt="IDL Engine V1.0">
-  <img src="https://img.shields.io/badge/React-18+-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
-  <img src="https://img.shields.io/badge/TypeScript-Ready-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
-</p>
+This contains everything you need to run your app locally.
 
----
+View your app in AI Studio: https://ai.studio/apps/94b48446-797a-496d-8007-6100b52c5440
 
-## 🌟 אודות הפרויקט
+## Run Locally
 
-**SQUAD NOOBS** הוא משחק ארקייד מתקדם ועוצמתי בסגנון 2D, המפותח ומורץ על גבי מנוע המשחק המתקדם **IDL Engine V1.0**. 
-המשחק משלב בין עולם האנימה האסתטי והדינמי לבין מכניקות לחימה עמוקות בהשראת משחקי ארקייד קלאסיים – הכוללות ניהול פרימים מדויק (Frame Data), מערכת קומבואים, אפקטים ויזואליים קולנועיים ומנוע סאונד סינתטי מתקדם.
+**Prerequisites:**  Node.js
 
----
 
-## ⚡ תכונות עיקריות
-
-### 👥 סגל לוחמי אנימה ייחודיים
-- ⚡ **איבן (Ivan) – חשמל ורוח:** מאסטר הסערה והרוח-חשמל. מתמחה במהירות מסחררת, זריזות גבוהה, חיתוכי רוח וברקי שמים.
-- 🔥 **עידן (Idan) – אש ואפלה:** אגרוף התופת האפלה. בעל כוח אש הרסני, להבות שחורות ויכולת שחרור נובת אפלה קטלנית.
-- 🛡️ **פיליפ (Philip) – אור ואדמה:** טיטאן הקריסטל והשמש. מתאפיין בהגנת קריסטל איתנה, עמודי אדמה וירי קרני שמש סולאריות מסנוורות.
-- 💧 **רוני (Roni) – מים ודם:** אדון המים והדם. סגנון לחימה זורם וקטלני הכולל שוטי סילון מים ומגל דם רותח.
-
-### 🏟️ זירות קרב דינמיות
-1. **סמטת ניאו-טוקיו (Neo-Tokyo Alley):** זירת רחוב אורבנית עם שלטי ניאון זוהרים וגשם דק.
-2. **מקדש הלבה והתופת (Infernal Lava Temple):** דוג׳ו עתיק המוקף בלבה רותחת וגיצי אש מרחפים.
-3. **מנחת הסערה והרעמים (Storm Rooftop Helipad):** גג גורד שחקים בסופת ברקים אימתנית וענני סערה רועמים.
-
-### ⚙️ ארכיטקטורה ומכניקות קרב (IDL Engine)
-- **Frame Data מדויק:** ניהול מלא של שלבי המכה (`Startup`, `Active`, `Recovery`, `HitStun`, `BlockStun`).
-- **פידבק קולנועי:** רעידות מסך דינמיות (`Screen Shake`), עצירת פרימים בעת פגיעה (`Hit-Stop`) וטבעות הדף (`Shockwave Rings`).
-- **מערכת תנועה מתקדמת:** דאש מהיר (`Dash`) הכולל אפקט עקבות רוח (`Ghost Trails`).
-- **מתקפות אולטימייט אלמנטריות:** הטענת מד אנרגיה ושחרור מהלומות אולטימייט קולנועייות המציפות את הזירה באפקטים ייחודיים.
-- **מנוע סאונד סינתטי (Arcade Audio Engine):** הפקת אפקטים קוליים חיים באמצעות Web Audio API בשילוב נגנים לשירי פסקול אנימה אגדיים.
-
----
-
-## 🎮 מצבי משחק
-- **PVP (שחקן נגד שחקן):** קרב פנים אל פנים מקומי לשני שחקנים על אותה מקלדת.
-- **VS AI (שחקן נגד מחשב):** קרב תחרותי ואתגרי מול בוט AI חכם בעל זמני תגובה דינמיים.
-- **Training Mode (מצב אימונים):** מצב חופשי המציע בובת אימון לבדיקת מכות, מונה נזק מצטבר ומד אולטימייט אינסופי לתרגול מושלם.
-
----
-
-## 🕹️ שחק עכשיו (Live Demo & Preview)
-
-<p align="center">
-  <a href="https://squad.idlhq.co.il/" target="_blank">
-    <img src="./logo.jpeg" alt="Squad Noobs Preview" style="border-radius: 12px; border: 2px solid #f59e0b; box-shadow: 0 10px 25px rgba(245,158,11,0.3); width: 100%; max-width: 600px;">
-  </a>
-</p>
-
-<p align="center">
-  <a href="https://squad.idlhq.co.il/" target="_blank">
-    <img src="https://img.shields.io/badge/🚀_לחץ_כאן_למשחק_ב-SQUAD_NOOBS-f59e0b?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Play Online">
-  </a>
-</p>
-
----
-
-## ⌨️ מקשים ובקרת שליטה
-
-| פעולה | שחקן 1 (מקלדת ראשית) | שחקן 2 (במצב PVP) |
-| :--- | :--- | :--- |
-| **תנועה (שמאלה / ימינה)** | `A` / `D` | חצים (`ArrowLeft` / `ArrowRight`) |
-| **קפיצה** | `W` | חץ למעלה (`ArrowUp`) |
-| **חסימה** | החזק `S` | החזק חץ למטה (`ArrowDown`) |
-| **דאש (התחמקות מהירה)** | `Q` (שמאלה) / `E` (ימינה) | `[` (שמאלה) / `]` (ימינה) |
-| **מכות קלות** | `Space` / `J` או `C` / `K` | `Shift` / `Numpad 1` או `/` / `Numpad 2` |
-| **מכות כבדות** | `F` / `H` או `G` / `I` | `.` / `Numpad 4` או `;` / `L` / `Numpad 5` |
-| **אולטימייט (Ultimate)** | `Y`, `U`, `O`, או `T` | `Enter`, `Numpad 0`, או `Numpad 3` |
-| **השהיה (Pause)** | `Escape` או `P` | `Escape` או `P` |
-
----
-
-## 🚀 התקנה והפעלה מקומית
-
-כדי להריץ את הפרויקט במחשב שלך, ודא שהתקנת מראש **Node.js**, ולאחר מכן בצע את הפקודות הבאות בטרמינל:
-
-```bash
-# 1. שכפל את המאגר או פתח את תיקיית הפרויקט
-cd squad-noobs
-
-# 2. התקן את כל התלויות הנדרשות
-npm install
-
-# 3. הפעל את שרת הפיתוח המקומי
-npm run dev
-
-```
-
-📜 קרדיטים ורישיון
-מנוע משחק: IDL Engine V1.0
-
-פיתוח ועיצוב: צוות IDL
-שנה: 2026
-
-כל הזכויות שמורות © 2026.
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

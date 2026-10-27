@@ -5085,8 +5085,8 @@ export default function App() {
             </div>
 
             <h1
-              className="text-4xl sm:text-5xl md:text-6xl font-black italic tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-red-600 drop-shadow-[0_5px_15px_rgba(239,68,68,0.7)]"
-              style={{ fontFamily: "'Press Start 2P', monospace, sans-serif" }}
+              className="text-5xl sm:text-6xl md:text-7xl font-black tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-red-600 drop-shadow-[0_5px_15px_rgba(239,68,68,0.7)]"
+              style={{ fontFamily: "'VT323', monospace, sans-serif" }}
             >
               SQUAD NOOBS
             </h1>
